@@ -2,6 +2,8 @@
 
 **Y Xue, Claude Science**
 
+*July 13, 2026*
+
 ---
 
 ## Abstract
