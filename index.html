@@ -50,6 +50,23 @@ body { transition:background .2s ease, color .2s ease; }
 .gh-link { color:#fff; display:inline-flex; align-items:center; opacity:.9; }
 .gh-link:hover { opacity:1; }
 .gh-link svg { display:block; }
+
+figure.fig { margin:1.5rem 0; }
+.fig-frame { position:relative; overflow:hidden; border:1px solid var(--border); border-radius:6px;
+  background:var(--code); cursor:zoom-in; box-shadow:0 1px 6px rgba(0,0,0,.08); }
+.fig-frame img { margin:0; border:none; border-radius:0; box-shadow:none; width:100%; display:block;
+  transform-origin:0 0; transition:transform .05s linear; will-change:transform; }
+.fig-frame.zoomed { cursor:grab; }
+.fig-frame.dragging { cursor:grabbing; }
+.fig-hint { font-size:.78rem; color:var(--muted); margin:.3rem 0 0; text-align:right; }
+.lightbox { position:fixed; inset:0; background:rgba(0,0,0,.9); display:none; z-index:1000;
+  align-items:center; justify-content:center; }
+.lightbox.open { display:flex; }
+.lightbox img { max-width:96vw; max-height:92vh; margin:0; border:none; border-radius:4px;
+  transform-origin:center center; cursor:grab; box-shadow:0 4px 30px rgba(0,0,0,.6); }
+.lightbox-close { position:fixed; top:14px; right:20px; color:#fff; font-size:2rem; cursor:pointer;
+  background:none; border:none; line-height:1; z-index:1001; }
+.lightbox-cap { position:fixed; bottom:14px; left:0; right:0; text-align:center; color:#ddd; font-size:.85rem; padding:0 1rem; }
 </style>
 </head>
 <body>
@@ -91,7 +108,7 @@ body { transition:background .2s ease, color .2s ease; }
 <h3 id="31-most-hars-with-accessibility-signal-peak-in-brain-but-a-substantial-non-brain-set-exists">3.1 Most HARs with accessibility signal peak in brain, but a substantial non-brain set exists</h3>
 <p>The 16 tissues we examined comprise the 14 profiled by the CATlas single-cell ATAC atlas (Zhang et al. 2021) — brain, heart, immune, intestine, kidney, liver, lung, muscle, pancreas, placenta, skin, stomach, adrenal and adipose — together with limb and testis, added from ENCODE DNase-seq because they are absent from CATlas (Methods §2.2). Of the 312 zooHARs, 143 have detectable accessibility in at least one of these tissues. Among these 143, brain is the highest-scoring tissue for the largest number of HARs (66/143 = 46%). This brain-enrichment is the expected result given the well-documented neurodevelopmental bias of HARs, and its recovery from an independent chromatin-accessibility dataset — one not used to define the HAR set — indicates that the matrix reproduces the known aggregate signal and is therefore a sound basis for the non-brain analysis that follows. On that basis, <strong>45 zooHARs are non-brain-dominant</strong> — their top tissue is non-brain and exceeds brain by margin &gt; 0.15 — and <strong>9 of these carry an ENCODE H3K27ac active-enhancer mark in that top tissue</strong>. The non-brain signal spans kidney, adrenal, lung, heart, intestine, pancreas, immune, muscle and skin lineages (Figure 1).</p>
 <p>A control against five named landmark HARs establishes the interpretive limit of the accessibility calls. Only two (HAR2/HACNS1 and 2xHAR.20) are in the zooHAR catalogue, and both score highest in brain or kidney rather than in their known transgenic-enhancer tissues (for example, HAR2's in-vivo limb activity, VISTA hs521, is not detected), because bulk and pseudobulk accessibility does not capture the developmental enhancer activity of these ~120 bp elements. The matrix thus reproduces the aggregate brain-enrichment of HARs but does not, by itself, identify the functional tissue of an individual element; the tissue calls in the following sections are accordingly treated as candidate hypotheses, not demonstrated enhancer function.</p>
-<p><img alt="Figure 1" src="figures/matrix_heatmap.png" /></p>
+<figure class="fig"><div class="fig-frame" data-cap="Figure 1"><img alt="Figure 1" src="figures/matrix_heatmap.png"></div><p class="fig-hint">scroll to zoom &middot; drag to pan &middot; click to enlarge</p></figure>
 <p><strong>Figure 1. Chromatin-accessibility landscape of the 312 zooHARs across 16 tissues.</strong> Heatmap of the normalized accessibility matrix, restricted to the 143 zooHARs with a non-zero score in at least one tissue (rows) across the 16 tissues (columns; 14 from the CATlas single-cell ATAC atlas, plus limb and testis from ENCODE DNase-seq). Colour encodes the within-tissue, zero-anchored normalized accessibility score (0–1), where the per-tissue value is the fraction of that tissue's cell types in which the HAR overlaps a candidate cis-regulatory element (CATlas) or the peak-gated maximum DNase signal (ENCODE limb and testis). Brain is the highest-scoring tissue for the largest number of HARs (66/143, 46%), consistent with the established neurodevelopmental enrichment of HARs, while a substantial subset shows its strongest accessibility outside the brain.</p>
 <h3 id="32-the-ten-highest-scoring-non-brain-hars-and-candidate-target-genes">3.2 The ten highest-scoring non-brain HARs and candidate target genes</h3>
 <p>We ranked the 45 non-brain-dominant HARs by accessibility score and examined the top ten (Table 1; Figure 2); they span muscle, kidney, skin, intestine, adrenal, pancreas and lung. This selection uses accessibility magnitude rather than active-enhancer marks as the primary criterion, which prioritises breadth of open chromatin over confirmed enhancer activity: only 2 of these 10 (ZOOHAR.200, ZOOHAR.62) carry an H3K27ac mark in their single top-scoring tissue, and the full set of 9 non-brain-dominant HARs with a top-tissue H3K27ac mark is a partly different group (§3.3, Table 2). The absence of a top-tissue mark for the other 8 does not exclude them as candidate enhancers, for two reasons. First, the mark is not generally absent: 8 of these 10 HARs carry an H3K27ac mark in at least one non-brain tissue — it simply does not fall in the highest-accessibility tissue. Second, the H3K27ac panel is incomplete: across all 45 non-brain-dominant HARs a top-tissue H3K27ac positive occurs only in adrenal, heart, immune, muscle and skin, so HARs topping kidney, intestine, lung or pancreas (6 of these 10) cannot register a top-tissue mark irrespective of their biology. The two criteria are therefore complementary rather than a filter: accessibility (CATlas single-cell ATAC) identifies candidate regulatory intervals, and the H3K27ac overlay (ENCODE bulk ChIP) upgrades the subset with independent active-enhancer evidence in the matched tissue; a HAR without the mark remains an accessibility-level candidate, not a rejected one.</p>
@@ -225,7 +242,7 @@ body { transition:background .2s ease, color .2s ease; }
 </tr>
 </tbody>
 </table>
-<p><img alt="Figure 2" src="figures/nonbrain_ranking.png" /></p>
+<figure class="fig"><div class="fig-frame" data-cap="Figure 2"><img alt="Figure 2" src="figures/nonbrain_ranking.png"></div><p class="fig-hint">scroll to zoom &middot; drag to pan &middot; click to enlarge</p></figure>
 <p><strong>Figure 2. Non-brain-dominant zooHARs.</strong> (a) The top 20 non-brain-dominant HARs ranked by normalized accessibility score. Bar length is the HAR's score in its top non-brain tissue, and the bar is coloured by that tissue (legend). The short vertical tick on each bar marks the same HAR's brain score for comparison; the tick sits at zero (and is therefore not visible) for HARs with no brain accessibility. A star (★) marks HARs carrying an ENCODE H3K27ac active-enhancer mark in their top tissue. The label at the right of each bar is the nearest annotated gene — a mix of protein-coding genes and non-coding/uncharacterized loci, shown as locus context and not implying that the HAR acts through that gene. (b) Tissue distribution of all 45 non-brain-dominant HARs (top tissue non-brain, exceeding the brain score by margin &gt; 0.15). A HAR is defined as non-brain-dominant on accessibility alone; active-enhancer-mark support is treated separately (Table 2, §3.3).</p>
 <h3 id="33-nine-non-brain-dominant-hars-carry-an-active-enhancer-mark-in-their-enriched-tissue">3.3 Nine non-brain-dominant HARs carry an active-enhancer mark in their enriched tissue</h3>
 <p>Of the 45 non-brain-dominant HARs, 9 overlap an ENCODE H3K27ac peak in the same tissue in which they are most accessible (Table 2). This co-occurrence of open chromatin and an active-enhancer histone mark in the enriched tissue is the strongest tissue-level evidence available in this dataset that these elements act as enhancers there, though it remains correlative: H3K27ac marks active regulatory chromatin but does not establish that the element drives a specific target gene, and none of the 9 overlaps a VISTA in-vivo positive enhancer, so none has independent transgenic confirmation. The 9 fall into interpretable groups. Two are the adjacent <em>RAP1GAP2</em> elements ZOOHAR.200 and ZOOHAR.124 (chr17, muscle), which overlap the gene body and may form a single muscle-active regulatory region. Three sit in transcription-factor or signalling genes with plausible tissue matches — ZOOHAR.302 in <em>GLIS3</em> (skin; <em>GLIS3</em> functions in epithelial and endocrine development), ZOOHAR.64 in <em>AXIN2</em> (immune; Wnt-pathway regulator), and ZOOHAR.208 in <em>PTPRT</em> (adrenal). Two are heart-accessible and near muscle/contractility genes (ZOOHAR.133 near <em>MIR4454</em>; ZOOHAR.189 2.7 kb from <em>MYLK2</em>, a cardiac/skeletal myosin light-chain kinase). ZOOHAR.62 (adrenal) lies 30 kb from the lncRNA <em>LINC00923</em>, and ZOOHAR.2 (adrenal) 167 kb from <em>MZT1</em>. As with the accessibility ranking, the distant assignments (<em>LINC00923</em>, <em>MZT1</em>) are candidate targets pending contact mapping. These 9 are the subset for which a tissue-matched reporter or CRISPRi assay is best motivated, because both the accessibility and the active-mark evidence point to the same tissue.</p>
@@ -416,9 +433,9 @@ body { transition:background .2s ease, color .2s ease; }
 <p>The largest single affinity gain in the screen belongs to <strong>ZOOHAR.151</strong> (bound FOSL2, an AP-1 factor; +14.3 bits, <em>P</em> = 0.008; pancreas 0.70, 301 kb from <em>ZNF608</em>), but four of its five substitutions are weak→strong and it carries no active-enhancer mark, so despite the magnitude it ranks below the CTCF, TP63, GATA3 and PRDM1 loci for follow-up: its spectrum is the most consistent with neutral GC-biased gene conversion among the significant hits, even though the per-locus null (which preserves that spectrum) still excludes chance at <em>P</em> &lt; 0.05. Conversely, ZOOHAR.278 (ZNF263, kidney) clears the null (<em>P</em> = 0.023) on an affinity change of only +0.7 bits, a reminder that statistical significance in this screen does not by itself imply a large effect: magnitude and significance are reported separately in Table 3, and the loci prioritised above combine both.</p>
 <p><strong>ZOOHAR.167 is recovered by the same screen but is non-significant.</strong> ZOOHAR.167 is one of the 45 non-brain-dominant HARs (lung; ranked 10th on accessibility, Table 1) and one of the 19 carrying a substitution inside a bound motif, but unlike the eight significant hits it does not clear the gBGC null (Figure 4). It lies inside the protein-coding gene <em>ETS1</em>. Its 3 of 4 human substitutions inside a bound ERG/ETS1 site raise predicted ETS affinity (ETS1 +10.6, ERG +2.8, FLI1 +15.2 bits), but all three are weak→strong, the element is high-confidence gBGC, and the null is not significant (<em>P</em> = 0.106 ETS1, 0.058 ERG). It illustrates why the null is applied throughout: an affinity gain at a GC-rich bound motif is expected under neutral gBGC, and only the mixed-spectrum hits in Table 3 exceed that expectation. (The three lncRNA-overlapping HARs flagged before the screen — ZOOHAR.24, ZOOHAR.42, ZOOHAR.216 — are re-scored by the same method in the supplement, §S1; none is a significant bound-motif gain.)</p>
 <p>These per-locus gains are hypotheses at the level of predicted affinity; as with ZOOHAR.167, none can be attributed to selection without an allele-specific functional assay, and the screen serves to identify which loci — led by ZOOHAR.189/CTCF, ZOOHAR.302/TP63, ZOOHAR.52/GATA3 and ZOOHAR.22/PRDM1 — are worth that assay and in which tissue.</p>
-<p><img alt="Figure 3" src="figures/fig7_zoohar189.png" /></p>
+<figure class="fig"><div class="fig-frame" data-cap="Figure 3"><img alt="Figure 3" src="figures/fig7_zoohar189.png"></div><p class="fig-hint">scroll to zoom &middot; drag to pan &middot; click to enlarge</p></figure>
 <p><strong>Figure 3. The strongest screen hit, ZOOHAR.189, gains a bound CTCF site.</strong> (a) Locus schematic: the HAR (chr20, 68 bp) lies 2.7 kb from <em>MYLK2</em> and is most accessible in heart. (b) The 33 bp window that scores highest for CTCF in the human allele, aligned ancestor over human; all three human-specific substitutions (highlighted; mixed spectrum, one W→S, one S→W, one S→S — not gBGC-like) fall inside it and convert a non-matching ancestral sequence into a CTCF match. (c) The best-scoring CTCF site anywhere in the element, for each allele: the reconstructed ancestor has no strong site (best −1.1 bits) while the human allele scores +7.0, a gain of Δ = +8.0 bits; a per-locus neutrality null (20,000 simulations) gives <em>P</em> = 0.0001, the most significant of the 19 bound-motif HARs. Human alleles were verified against hg38 before scoring.</p>
-<p><img alt="Figure 4" src="figures/ZOOHAR167_flagship_mechanism.png" /></p>
+<figure class="fig"><div class="fig-frame" data-cap="Figure 4"><img alt="Figure 4" src="figures/ZOOHAR167_flagship_mechanism.png"></div><p class="fig-hint">scroll to zoom &middot; drag to pan &middot; click to enlarge</p></figure>
 <p><strong>Figure 4. ZOOHAR.167 at the <em>ETS1/FLI1</em> locus, recovered by the screen but non-significant.</strong> (a) Locus schematic: the HAR (chr11q24.3, 97 bp) sits inside <em>ETS1</em>, 209 kb from <em>FLI1</em>. (b) Three human-specific substitutions (all A/T→G/C) fall within a ChIP-seq-bound ERG/ETS1 motif; the ancestral allele is conserved in 9/9 non-human primates. (c) Independent PWM re-score of human vs reconstructed-ancestor affinity: ETS1 +10.6, ERG +2.8, FLI1 +15.2 bits. Because a per-locus neutrality null gives P = 0.106 (ETS1) and P = 0.058 (ERG), the gain is not distinguishable from GC-biased gene conversion without an allele-specific functional assay.</p>
 <hr />
 <h2 id="4-discussion">4. Discussion</h2>
@@ -474,6 +491,56 @@ body { transition:background .2s ease, color .2s ease; }
 })();
 </script>
 
+
+<script>
+(function(){
+  // inline zoom/pan on each figure frame
+  document.querySelectorAll('.fig-frame').forEach(function(frame){
+    var img=frame.querySelector('img'); var scale=1, tx=0, ty=0, drag=false, sx=0, sy=0;
+    function apply(){img.style.transform='translate('+tx+'px,'+ty+'px) scale('+scale+')';}
+    frame.addEventListener('wheel',function(e){
+      e.preventDefault();
+      var rect=frame.getBoundingClientRect();
+      var ox=e.clientX-rect.left, oy=e.clientY-rect.top;
+      var prev=scale;
+      scale += (e.deltaY<0?0.2:-0.2); scale=Math.max(1,Math.min(6,scale));
+      if(scale===1){tx=0;ty=0;} else {
+        var k=scale/prev; tx=ox-(ox-tx)*k; ty=oy-(oy-ty)*k;}
+      frame.classList.toggle('zoomed',scale>1); apply();
+    },{passive:false});
+    frame.addEventListener('mousedown',function(e){ if(scale===1)return;
+      drag=true; sx=e.clientX-tx; sy=e.clientY-ty; frame.classList.add('dragging'); e.preventDefault();});
+    window.addEventListener('mousemove',function(e){ if(!drag)return; tx=e.clientX-sx; ty=e.clientY-sy; apply();});
+    window.addEventListener('mouseup',function(){ drag=false; frame.classList.remove('dragging');});
+    // click (no zoom, no drag) opens lightbox
+    var moved=false;
+    frame.addEventListener('mousedown',function(){moved=false;});
+    frame.addEventListener('mousemove',function(){if(drag)moved=true;});
+    frame.addEventListener('click',function(){
+      if(moved||scale>1)return;
+      openLight(img.getAttribute('src'), frame.getAttribute('data-cap')||'');
+    });
+  });
+  // lightbox
+  var lb=document.createElement('div'); lb.className='lightbox';
+  lb.innerHTML='<button class="lightbox-close" aria-label="Close">&times;</button>'+
+    '<img alt=""><div class="lightbox-cap"></div>';
+  document.body.appendChild(lb);
+  var limg=lb.querySelector('img'), lcap=lb.querySelector('.lightbox-cap');
+  var ls=1, ltx=0, lty=0, ld=false, lsx=0, lsy=0;
+  function lapply(){limg.style.transform='translate('+ltx+'px,'+lty+'px) scale('+ls+')';}
+  function openLight(src,cap){ls=1;ltx=0;lty=0;lapply();limg.src=src;lcap.textContent=cap;lb.classList.add('open');}
+  function closeLight(){lb.classList.remove('open');}
+  lb.querySelector('.lightbox-close').addEventListener('click',closeLight);
+  lb.addEventListener('click',function(e){if(e.target===lb)closeLight();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeLight();});
+  limg.addEventListener('wheel',function(e){e.preventDefault();
+    ls+=(e.deltaY<0?0.25:-0.25);ls=Math.max(1,Math.min(8,ls));if(ls===1){ltx=0;lty=0;}lapply();},{passive:false});
+  limg.addEventListener('mousedown',function(e){if(ls===1)return;ld=true;lsx=e.clientX-ltx;lsy=e.clientY-lty;e.preventDefault();});
+  window.addEventListener('mousemove',function(e){if(!ld)return;ltx=e.clientX-lsx;lty=e.clientY-lsy;lapply();});
+  window.addEventListener('mouseup',function(){ld=false;});
+})();
+</script>
 
 </body>
 </html>

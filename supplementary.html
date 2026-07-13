@@ -50,6 +50,23 @@ body { transition:background .2s ease, color .2s ease; }
 .gh-link { color:#fff; display:inline-flex; align-items:center; opacity:.9; }
 .gh-link:hover { opacity:1; }
 .gh-link svg { display:block; }
+
+figure.fig { margin:1.5rem 0; }
+.fig-frame { position:relative; overflow:hidden; border:1px solid var(--border); border-radius:6px;
+  background:var(--code); cursor:zoom-in; box-shadow:0 1px 6px rgba(0,0,0,.08); }
+.fig-frame img { margin:0; border:none; border-radius:0; box-shadow:none; width:100%; display:block;
+  transform-origin:0 0; transition:transform .05s linear; will-change:transform; }
+.fig-frame.zoomed { cursor:grab; }
+.fig-frame.dragging { cursor:grabbing; }
+.fig-hint { font-size:.78rem; color:var(--muted); margin:.3rem 0 0; text-align:right; }
+.lightbox { position:fixed; inset:0; background:rgba(0,0,0,.9); display:none; z-index:1000;
+  align-items:center; justify-content:center; }
+.lightbox.open { display:flex; }
+.lightbox img { max-width:96vw; max-height:92vh; margin:0; border:none; border-radius:4px;
+  transform-origin:center center; cursor:grab; box-shadow:0 4px 30px rgba(0,0,0,.6); }
+.lightbox-close { position:fixed; top:14px; right:20px; color:#fff; font-size:2rem; cursor:pointer;
+  background:none; border:none; line-height:1; z-index:1001; }
+.lightbox-cap { position:fixed; bottom:14px; left:0; right:0; text-align:center; color:#ddd; font-size:.85rem; padding:0 1rem; }
 </style>
 </head>
 <body>
@@ -129,7 +146,7 @@ body { transition:background .2s ease, color .2s ease; }
 - <strong>Single-cell context.</strong> 37/110 HARs have CellWalker calls — 24 fetal telencephalon, 19 adult brain, and <strong>1 adult heart</strong> (ZOOHAR.182, ventricular cardiomyocyte).
 - <strong>TF binding.</strong> The detailed UniBind ChIP-seq motif analysis — intersecting each human-specific substitution with experimentally bound TF motifs — was run, within this lncRNA-overlapping set, on a focus set of 19 HARs prioritised for closer inspection; most carry prior enhancer evidence (16 of the 19 are MPRA-active and 16 carry an active-enhancer mark), though the set also includes a few weaker loci and spans all four evidence tiers. Of these 19, <strong>3 carry a human-specific substitution inside a validated (ChIP-seq-bound) TF motif</strong>: ZOOHAR.24 (3 substitutions within NFKB1 and STAT3 sites; 146 bound sites, the densest in the set), ZOOHAR.216 (CDX2), and ZOOHAR.42 (STAT3). These are TFBS-overlap counts; whether each substitution strengthens or weakens binding is not determined by overlap alone, and all three were carried into a per-allele PWM affinity re-score with a gBGC neutrality control in the main manuscript (§3.4), where the ZOOHAR.24 substitutions are shown to <em>create</em> a bound STAT3 site (borderline against the gBGC null), while ZOOHAR.42's bound STAT3 site loses affinity and ZOOHAR.216's substitutions fall in no strong bound motif. (ZOOHAR.167 is not in this set — it lies inside the protein-coding gene <em>ETS1</em>, not a lncRNA gene — and is analysed by the same method in the main manuscript §3.4.)</p>
 <p>The per-locus re-scoring results for the three lncRNA-set HARs are as follows. <strong>ZOOHAR.24</strong> (chr3, in the lncRNA <em>ENSG00000286856</em> within <em>TNIK</em>; 5 substitutions, W→S 3 / S→W 1 / S→S 1) is the most substitution-dense HAR in the lncRNA-overlapping set (9.3 substitutions/100 bp; 146 bound UniBind sites) and is most accessible in pancreas (0.58) and adrenal (0.43), MPRA-active. Its substitutions <strong>create</strong> a bound STAT3 site (−8.4 → +4.1 bits, +12.5) — the largest predicted gain of the three — but the gBGC null is borderline (<em>P</em> = 0.058), so the gain is not clearly distinguishable from neutral GC-biased gene conversion; the earlier overlap-based "disrupted NFKB1/STAT3" annotation is superseded (the change strengthens, not abolishes, binding), and a re-scored HOXA10 effect is negligible (Δ = −0.22). <strong>ZOOHAR.42</strong> (chr2, intronic in <em>LINC01798</em>; 6 substitutions, mixed spectrum; top tissue pancreas 0.58) has a substitution inside a bound STAT3 site, but that site <strong>loses</strong> affinity in the human allele (Δ = −1.6, <em>P</em> = 0.91); a predicted (unbound) NFKB1 motif elsewhere gains affinity, but UniBind does not confirm NFKB1 as bound at this locus, so ZOOHAR.42 is not a bound-motif gain candidate. <strong>ZOOHAR.216</strong> (chr2, near <em>FIGN</em>; 4 substitutions; kidney 0.86 but not non-brain-dominant, brain reaching 0.79) carries no substitution inside a strong bound motif: its best CDX2 site (14.64 bits) lies elsewhere in the 748 bp element and is unchanged by the human alleles (Δ = 0.00). None of the three is a significant bound-motif affinity gain.</p>
-<p><img alt="Figure S1" src="figures/evidence_tier_classification.png" /></p>
+<figure class="fig"><div class="fig-frame" data-cap="Figure S1"><img alt="Figure S1" src="figures/evidence_tier_classification.png"></div><p class="fig-hint">scroll to zoom &middot; drag to pan &middot; click to enlarge</p></figure>
 <p><strong>Figure S1. Evidence-tier classification of the 110 lncRNA-overlapping HARs.</strong> Distribution of HARs across the four tiers — A (functional lncRNA), B (eRNA / enhancer-is-the-unit), C (enhancer + transcript), D (insufficient evidence) — together with the six evidence types (gene structure, MPRA, enhancer chromatin, single-cell context, expression, TF-motif disruption) that determine each call. Tier B (enhancer-unit) is the largest class.</p>
 <h2 id="s2-expression-is-developmental-and-multi-tissue-not-brain-exclusive">S2. Expression is developmental and multi-tissue, not brain-exclusive</h2>
 <p>Adult GTEx v10 detects only <strong>15 of the 124 host genes</strong> (≥1 TPM), mapping to <strong>12 distinct HARs</strong>, and skewed to testis. Development changes the picture in two respects, and it is mostly <strong>not</strong> brain (Table S2):
@@ -179,11 +196,11 @@ body { transition:background .2s ease, color .2s ease; }
 </tbody>
 </table>
 <p>The tier-B "~0% expressed" is correct for the developing brain and adult body — the contexts that decide the eRNA-vs-lncRNA question — while a third of tier-B host transcripts are detectable in the fetal atlas, mostly outside the brain. Annotation lag bounds the zeros: 33/63 tier-B pairs are absent from GTEx v10's annotation and 43/63 from BrainSpan's, so "not detected" there is a conservative floor rather than proven silence.</p>
-<p><img alt="Figure S2" src="figures/zooHAR_lncRNA_expression_by_tier.png" /></p>
+<figure class="fig"><div class="fig-frame" data-cap="Figure S2"><img alt="Figure S2" src="figures/zooHAR_lncRNA_expression_by_tier.png"></div><p class="fig-hint">scroll to zoom &middot; drag to pan &middot; click to enlarge</p></figure>
 <p><strong>Figure S2. Host-lncRNA expression by tier and dataset.</strong> Fraction of host lncRNAs detected in each of the three expression references — BrainSpan developing brain (≥1 RPKM), GTEx v10 adult body (≥1 TPM), and the Descartes fetal 15-organ atlas — broken down by evidence tier. Tier A hosts are broadly expressed; Tier B hosts are undetected in developing brain and adult body (0/63 each) but a third are detectable in the fetal atlas, mostly outside the brain.</p>
 <h2 id="s3-even-in-the-functional-lncrna-tier-the-human-specific-changes-are-spliced-out">S3. Even in the functional-lncRNA tier, the human-specific changes are spliced out</h2>
 <p>If the Tier A "functional lncRNA" hypothesis were correct, the human-specific substitutions should preferentially land in exonic sequence, where they are retained in the mature RNA. Mapping all 24 Tier A HARs (94 substitutions) against per-isoform exon structure shows the opposite: <strong>22 of 24 Tier A HARs are fully intronic</strong> and <strong>94% of substitutions are spliced out</strong> of the mature transcript (Figure S3). Only ZOOHAR.109 and ZOOHAR.237 (<em>PTPRD-AS1</em>) place substitutions in exonic sequence, and each only in a single minority isoform. So even in the tier selected <em>for</em> a functional-lncRNA signature, the <em>human-specific</em> changes almost never reach the RNA product — they are positioned as intronic cis-regulatory elements embedded in the host gene, consistent with the intronic-enhancer reading of §S1.</p>
-<p><img alt="Figure S3" src="figures/tierA_exon_intron_summary.png" /></p>
+<figure class="fig"><div class="fig-frame" data-cap="Figure S3"><img alt="Figure S3" src="figures/tierA_exon_intron_summary.png"></div><p class="fig-hint">scroll to zoom &middot; drag to pan &middot; click to enlarge</p></figure>
 <p><strong>Figure S3. Tier A human-specific substitutions mapped to exon/intron structure.</strong> For each of the 24 Tier A ("functional lncRNA") HARs, the 94 human-specific substitutions are classified as exonic (retained in the mature RNA of ≥1 isoform) or intronic (spliced out). 22 of 24 HARs are fully intronic and 94% of substitutions are spliced out; only ZOOHAR.109 and ZOOHAR.237 (<em>PTPRD-AS1</em>) place substitutions in exonic sequence, each in a single minority isoform.</p>
 <hr />
 <h2 id="s4-data-and-code-availability">S4. Data and code availability</h2>
@@ -214,6 +231,56 @@ body { transition:background .2s ease, color .2s ease; }
 })();
 </script>
 
+
+<script>
+(function(){
+  // inline zoom/pan on each figure frame
+  document.querySelectorAll('.fig-frame').forEach(function(frame){
+    var img=frame.querySelector('img'); var scale=1, tx=0, ty=0, drag=false, sx=0, sy=0;
+    function apply(){img.style.transform='translate('+tx+'px,'+ty+'px) scale('+scale+')';}
+    frame.addEventListener('wheel',function(e){
+      e.preventDefault();
+      var rect=frame.getBoundingClientRect();
+      var ox=e.clientX-rect.left, oy=e.clientY-rect.top;
+      var prev=scale;
+      scale += (e.deltaY<0?0.2:-0.2); scale=Math.max(1,Math.min(6,scale));
+      if(scale===1){tx=0;ty=0;} else {
+        var k=scale/prev; tx=ox-(ox-tx)*k; ty=oy-(oy-ty)*k;}
+      frame.classList.toggle('zoomed',scale>1); apply();
+    },{passive:false});
+    frame.addEventListener('mousedown',function(e){ if(scale===1)return;
+      drag=true; sx=e.clientX-tx; sy=e.clientY-ty; frame.classList.add('dragging'); e.preventDefault();});
+    window.addEventListener('mousemove',function(e){ if(!drag)return; tx=e.clientX-sx; ty=e.clientY-sy; apply();});
+    window.addEventListener('mouseup',function(){ drag=false; frame.classList.remove('dragging');});
+    // click (no zoom, no drag) opens lightbox
+    var moved=false;
+    frame.addEventListener('mousedown',function(){moved=false;});
+    frame.addEventListener('mousemove',function(){if(drag)moved=true;});
+    frame.addEventListener('click',function(){
+      if(moved||scale>1)return;
+      openLight(img.getAttribute('src'), frame.getAttribute('data-cap')||'');
+    });
+  });
+  // lightbox
+  var lb=document.createElement('div'); lb.className='lightbox';
+  lb.innerHTML='<button class="lightbox-close" aria-label="Close">&times;</button>'+
+    '<img alt=""><div class="lightbox-cap"></div>';
+  document.body.appendChild(lb);
+  var limg=lb.querySelector('img'), lcap=lb.querySelector('.lightbox-cap');
+  var ls=1, ltx=0, lty=0, ld=false, lsx=0, lsy=0;
+  function lapply(){limg.style.transform='translate('+ltx+'px,'+lty+'px) scale('+ls+')';}
+  function openLight(src,cap){ls=1;ltx=0;lty=0;lapply();limg.src=src;lcap.textContent=cap;lb.classList.add('open');}
+  function closeLight(){lb.classList.remove('open');}
+  lb.querySelector('.lightbox-close').addEventListener('click',closeLight);
+  lb.addEventListener('click',function(e){if(e.target===lb)closeLight();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeLight();});
+  limg.addEventListener('wheel',function(e){e.preventDefault();
+    ls+=(e.deltaY<0?0.25:-0.25);ls=Math.max(1,Math.min(8,ls));if(ls===1){ltx=0;lty=0;}lapply();},{passive:false});
+  limg.addEventListener('mousedown',function(e){if(ls===1)return;ld=true;lsx=e.clientX-ltx;lsy=e.clientY-lty;e.preventDefault();});
+  window.addEventListener('mousemove',function(e){if(!ld)return;ltx=e.clientX-lsx;lty=e.clientY-lsy;lapply();});
+  window.addEventListener('mouseup',function(){ld=false;});
+})();
+</script>
 
 </body>
 </html>
