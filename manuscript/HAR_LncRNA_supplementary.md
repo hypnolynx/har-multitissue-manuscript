@@ -1,7 +1,5 @@
 # Supplementary Analysis — HARs inside long non-coding RNA genes: evidence-tier classification, developmental expression, and substitution placement
 
-**Claude Science — supplement to *"Multi-tissue chromatin activity and human-specific transcription-factor binding gains in human accelerated regions"*** (`HAR_manuscript.md`)
-
 ---
 
 ## S0. Scope
@@ -10,7 +8,7 @@ This supplement develops the classification of the **110 zooHARs that fall insid
 
 The HAR set (312 zooHARs of Keough et al. 2023), genome build (hg38), the multi-tissue accessibility matrix, the human-specific substitution calls (Ensembl EPO primate alignment), and all shared data sources are as described in the main manuscript (`HAR_manuscript.md`, §2). The analysis-specific procedures for the tiers and the exon/intron mapping are summarised below. The main manuscript's TF-motif affinity re-scoring and gBGC neutrality screen (§3.4 there) use the same substitution calls and scoring method; the three lncRNA-overlapping HARs identified here as carrying a substitution inside a bound motif (§S1) are re-scored by that method and reported in §S1 below.
 
-## S0.1 Methods (analysis-specific)
+## S0.1 Methods
 
 **lncRNA overlap and evidence tiers.** The 312 zooHARs were intersected against **GENCODE v50** long non-coding RNA gene models (`gencode.v50.long_noncoding_RNAs.gtf`, 2026-04-08). Each of the resulting 127 HAR–lncRNA pairs (110 HARs, 124 genes) was classified into one of four tiers by combining six evidence types:
 
