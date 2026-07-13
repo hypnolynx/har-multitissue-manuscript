@@ -1,6 +1,9 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Data files</title>
+<title>Table viewer</title>
 <style>
 :root { --fg:#1a1a1a; --muted:#666; --accent:#0b5394; --bg:#fff; --code:#f5f5f5; --border:#e2e2e2; }
 * { box-sizing:border-box; }
@@ -64,32 +67,26 @@ figure.fig { margin:1.5rem 0; }
 .lightbox-close { position:fixed; top:14px; right:20px; color:#fff; font-size:2rem; cursor:pointer;
   background:none; border:none; line-height:1; z-index:1001; }
 .lightbox-cap { position:fixed; bottom:14px; left:0; right:0; text-align:center; color:#ddd; font-size:.85rem; padding:0 1rem; }
-</style></head>
-<body><nav class="top">
-  <a href="../index.html">Manuscript</a>
-  <a href="../supplementary.html">Supplementary</a>
-  <a href="../data/">Data files</a>
+
+.muted { color:var(--muted); }
+</style>
+</head>
+<body>
+<nav class="top">
+  <a href="index.html">Manuscript</a>
+  <a href="supplementary.html">Supplementary</a>
+  <a href="data/">Data files</a>
   <span class="nav-right">
     <a class="gh-link" href="https://github.com/hypnolynx/har-multitissue-manuscript" target="_blank" rel="noopener" title="View source on GitHub" aria-label="GitHub repository"><svg height="22" width="22" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.380-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></svg></a>
     <button id="theme-btn" class="theme-toggle" type="button" aria-label="Toggle dark mode">&#9790; Dark</button>
   </span>
 </nav>
 <div class="wrap">
-<h1>Data files</h1>
-<p class="muted">Per-locus source tables underlying the manuscript. All values re-derived from primary outputs (hg38). Click a file name to view the table; use <em>raw</em> to download the CSV.</p>
-<table><tr><th>File</th><th>Size</th><th>Raw</th></tr>
-<tr><td><a href="../viewer.html?file=data/HAR45_unibind_affinity_null.csv">HAR45_unibind_affinity_null.csv</a></td><td>720 bytes</td><td><a href="HAR45_unibind_affinity_null.csv" download>raw</a></td></tr>
-<tr><td><a href="../viewer.html?file=data/HAR45_unibind_subs.csv">HAR45_unibind_subs.csv</a></td><td>587 bytes</td><td><a href="HAR45_unibind_subs.csv" download>raw</a></td></tr>
-<tr><td><a href="../viewer.html?file=data/ZOOHAR167_ETS_validation.csv">ZOOHAR167_ETS_validation.csv</a></td><td>1,174 bytes</td><td><a href="ZOOHAR167_ETS_validation.csv" download>raw</a></td></tr>
-<tr><td><a href="../viewer.html?file=data/har_set_hg38.csv">har_set_hg38.csv</a></td><td>31,353 bytes</td><td><a href="har_set_hg38.csv" download>raw</a></td></tr>
-<tr><td><a href="../viewer.html?file=data/har_tissue_matrix.csv">har_tissue_matrix.csv</a></td><td>24,548 bytes</td><td><a href="har_tissue_matrix.csv" download>raw</a></td></tr>
-<tr><td><a href="../viewer.html?file=data/nonbrain_H3K27ac_active_HARs.csv">nonbrain_H3K27ac_active_HARs.csv</a></td><td>756 bytes</td><td><a href="nonbrain_H3K27ac_active_HARs.csv" download>raw</a></td></tr>
-<tr><td><a href="../viewer.html?file=data/nonbrain_ranked_HARs.csv">nonbrain_ranked_HARs.csv</a></td><td>6,718 bytes</td><td><a href="nonbrain_ranked_HARs.csv" download>raw</a></td></tr>
-<tr><td><a href="../viewer.html?file=data/paper_readiness_scorecard.csv">paper_readiness_scorecard.csv</a></td><td>1,259 bytes</td><td><a href="paper_readiness_scorecard.csv" download>raw</a></td></tr>
-<tr><td><a href="../viewer.html?file=data/tierA_substitutions_exon_intron.csv">tierA_substitutions_exon_intron.csv</a></td><td>7,046 bytes</td><td><a href="tierA_substitutions_exon_intron.csv" download>raw</a></td></tr>
-<tr><td><a href="../viewer.html?file=data/zooHAR_lncRNA_evidence_tiers.csv">zooHAR_lncRNA_evidence_tiers.csv</a></td><td>33,714 bytes</td><td><a href="zooHAR_lncRNA_evidence_tiers.csv" download>raw</a></td></tr>
-<tr><td><a href="../viewer.html?file=data/zooHAR_lncRNA_overlap_pairs.csv">zooHAR_lncRNA_overlap_pairs.csv</a></td><td>13,338 bytes</td><td><a href="zooHAR_lncRNA_overlap_pairs.csv" download>raw</a></td></tr>
-</table>
+  <p><a href="data/">&larr; All data files</a></p>
+  <h1 id="fname">Loading…</h1>
+  <p id="meta" class="muted"></p>
+  <p><a id="dl" href="#" download>Download raw CSV</a></p>
+  <div id="tablewrap" style="overflow-x:auto;"></div>
 </div>
 
 <script>
@@ -113,4 +110,54 @@ figure.fig { margin:1.5rem 0; }
 })();
 </script>
 
-</body></html>
+<script>
+(function(){
+  var params=new URLSearchParams(location.search);
+  var file=params.get('file');
+  var fn=document.getElementById('fname'), meta=document.getElementById('meta'),
+      wrap=document.getElementById('tablewrap'), dl=document.getElementById('dl');
+  if(!file){fn.textContent='No file specified';return;}
+  if(!/^data\/[A-Za-z0-9_.\-]+\.csv$/.test(file)){fn.textContent='Invalid file';return;}
+  fn.textContent=file.split('/').pop(); dl.href=file;
+  fetch(file).then(function(r){if(!r.ok)throw new Error(r.status);return r.text();})
+    .then(function(txt){render(txt);})
+    .catch(function(e){wrap.innerHTML='<p style="color:#c0392b">Could not load '+file+' ('+e.message+')</p>';});
+  function parseCSV(text){
+    var rows=[],row=[],f='',i=0,q=false,c; text=text.replace(/\r\n?/g,'\n');
+    while(i<text.length){c=text[i];
+      if(q){ if(c==='"'){ if(text[i+1]==='"'){f+='"';i++;} else q=false;} else f+=c; }
+      else { if(c==='"')q=true; else if(c===','){row.push(f);f='';}
+        else if(c==='\n'){row.push(f);rows.push(row);row=[];f='';} else f+=c; }
+      i++;}
+    if(f.length||row.length){row.push(f);rows.push(row);}
+    return rows.filter(function(r){return r.length>1||(r.length===1&&r[0]!=='');});
+  }
+  function render(txt){
+    var rows=parseCSV(txt); if(!rows.length){wrap.textContent='(empty)';return;}
+    var head=rows[0], body=rows.slice(1);
+    meta.textContent=body.length+' rows \u00d7 '+head.length+' columns';
+    var sortState={col:-1,dir:1};
+    var tbl=document.createElement('table');
+    var thead=document.createElement('thead'), tr=document.createElement('tr');
+    head.forEach(function(h,ci){var th=document.createElement('th');th.textContent=h;
+      th.style.cursor='pointer';th.title='Click to sort';
+      th.addEventListener('click',function(){
+        sortState.dir=(sortState.col===ci)?-sortState.dir:1; sortState.col=ci;
+        body.sort(function(a,b){var x=a[ci]||'',y=b[ci]||'';
+          var nx=parseFloat(x),ny=parseFloat(y);
+          if(!isNaN(nx)&&!isNaN(ny))return (nx-ny)*sortState.dir;
+          return x.localeCompare(y)*sortState.dir;});
+        fill();});
+      tr.appendChild(th);});
+    thead.appendChild(tr);tbl.appendChild(thead);
+    var tbody=document.createElement('tbody');tbl.appendChild(tbody);
+    function fill(){tbody.innerHTML='';
+      body.forEach(function(r){var t=document.createElement('tr');
+        head.forEach(function(_,ci){var td=document.createElement('td');td.textContent=r[ci]!==undefined?r[ci]:'';t.appendChild(td);});
+        tbody.appendChild(t);});}
+    fill();wrap.innerHTML='';wrap.appendChild(tbl);
+  }
+})();
+</script>
+</body>
+</html>
