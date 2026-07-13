@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Supplementary — HAR lncRNA analysis</title>
+<style>
+:root { --fg:#1a1a1a; --muted:#666; --accent:#0b5394; --bg:#fff; --code:#f5f5f5; --border:#e2e2e2; }
+* { box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  color:var(--fg); background:var(--bg); line-height:1.65; margin:0; }
+.wrap { max-width:820px; margin:0 auto; padding:2rem 1.25rem 5rem; }
+nav.top { background:#0b5394; color:#fff; padding:.7rem 1.25rem; position:sticky; top:0; z-index:10;
+  box-shadow:0 1px 4px rgba(0,0,0,.15); }
+nav.top a { color:#fff; text-decoration:none; margin-right:1.2rem; font-weight:600; font-size:.95rem; opacity:.9; }
+nav.top a:hover { opacity:1; text-decoration:underline; }
+h1 { font-size:1.85rem; line-height:1.25; margin-top:1.5rem; }
+h2 { font-size:1.4rem; margin-top:2.4rem; border-bottom:2px solid var(--border); padding-bottom:.3rem; }
+h3 { font-size:1.12rem; margin-top:1.8rem; color:#333; }
+p, li { font-size:1rem; }
+a { color:var(--accent); }
+img { max-width:100%; height:auto; display:block; margin:1.5rem auto; border:1px solid var(--border);
+  border-radius:6px; box-shadow:0 1px 6px rgba(0,0,0,.08); }
+code { background:var(--code); padding:.1rem .35rem; border-radius:4px; font-size:.88em;
+  font-family:"SFMono-Regular",Consolas,monospace; }
+pre code { display:block; padding:1rem; overflow-x:auto; }
+table { border-collapse:collapse; width:100%; margin:1.5rem 0; font-size:.9rem; }
+th, td { border:1px solid var(--border); padding:.45rem .6rem; text-align:left; }
+th { background:#f0f4f8; }
+tr:nth-child(even) td { background:#fafbfc; }
+hr { border:none; border-top:1px solid var(--border); margin:2.5rem 0; }
+blockquote { border-left:3px solid var(--accent); margin:1.2rem 0; padding:.2rem 1rem; color:var(--muted); background:#fafbfc; }
+em { font-style:italic; }
+footer { color:var(--muted); font-size:.85rem; border-top:1px solid var(--border); margin-top:3rem; padding-top:1rem; }
+</style>
+</head>
+<body>
+<nav class="top">
+  <a href="index.html">Manuscript</a>
+  <a href="supplementary.html">Supplementary</a>
+  <a href="data/">Data files</a>
+</nav>
+<div class="wrap">
+<h1 id="supplementary-analysis-hars-inside-long-non-coding-rna-genes-evidence-tier-classification-developmental-expression-and-substitution-placement">Supplementary Analysis — HARs inside long non-coding RNA genes: evidence-tier classification, developmental expression, and substitution placement</h1>
+<p><strong>Claude Science — supplement to <em>"Multi-tissue chromatin activity and human-specific transcription-factor binding gains in human accelerated regions"</em></strong> (<code>HAR_manuscript.md</code>)</p>
+<hr />
+<h2 id="s0-scope">S0. Scope</h2>
+<p>This supplement develops the classification of the <strong>110 zooHARs that fall inside a GENCODE v50 lncRNA gene</strong> (127 HAR–lncRNA pairs, 124 genes). Three analyses are presented: their partition into four evidence tiers (§S1), the developmental and adult expression of their host lncRNAs across brain and body (§S2), and the exon/intron placement of the human-specific substitutions in the functional-lncRNA tier (§S3). Together they establish that within this subset enhancer-unit signatures predominate over functional-lncRNA signatures, and that the associated expression is developmental and multi-tissue rather than brain-exclusive.</p>
+<p>The HAR set (312 zooHARs of Keough et al. 2023), genome build (hg38), the multi-tissue accessibility matrix, the human-specific substitution calls (Ensembl EPO primate alignment), and all shared data sources are as described in the main manuscript (<code>HAR_manuscript.md</code>, §2). The analysis-specific procedures for the tiers and the exon/intron mapping are summarised below. The main manuscript's TF-motif affinity re-scoring and gBGC neutrality screen (§3.4 there) use the same substitution calls and scoring method; the three lncRNA-overlapping HARs identified here as carrying a substitution inside a bound motif (§S1) are re-scored by that method and reported in §S1 below.</p>
+<h2 id="s01-methods-analysis-specific">S0.1 Methods (analysis-specific)</h2>
+<p><strong>lncRNA overlap and evidence tiers.</strong> The 312 zooHARs were intersected against <strong>GENCODE v50</strong> long non-coding RNA gene models (<code>gencode.v50.long_noncoding_RNAs.gtf</code>, 2026-04-08). Each of the resulting 127 HAR–lncRNA pairs (110 HARs, 124 genes) was classified into one of four tiers by combining six evidence types:</p>
+<ol>
+<li><strong>Gene structure</strong> — exon count, isoform count, and HAR position relative to the transcript (intronic / exonic / at-TSS; distance to TSS).</li>
+<li><strong>MPRA</strong> — the paper's lentiMPRA in fetal (GW18) telencephalon, using its own activity threshold (RNA:DNA ≥ 1.06).</li>
+<li><strong>Enhancer chromatin</strong> — the per-HAR epigenomic feature list parsed into tissue categories, scored for active-enhancer marks (H3K27ac / H3K4me1 / H3K4me3 / H3K9ac).</li>
+<li><strong>Single-cell context</strong> — CellWalker cell-type assignments (fetal telencephalon, adult brain, adult heart).</li>
+<li><strong>Expression</strong> — host lncRNA detection across three references: <strong>BrainSpan</strong> developing brain (≥1 RPKM, max across stages), <strong>GTEx v10</strong> adult body (≥1 TPM), and the <strong>Descartes</strong> fetal 15-organ atlas (Cao et al. 2020, GSE156793; size-factor-normalized pseudobulk).</li>
+<li><strong>TF binding and motif disruption</strong> — UniBind ChIP-seq TFBS density, and whether a human-specific substitution falls inside a validated motif.</li>
+</ol>
+<p>Tiers were defined as: <strong>A</strong>, functional lncRNA (host transcript spliced and expressed beyond the immediate locus, with only weak enhancer-unit evidence); <strong>B</strong>, eRNA / enhancer-is-the-unit (MPRA-active or TF-dense with active-enhancer chromatin, host expression locus-restricted or absent); <strong>C</strong>, enhancer plus transcript (both signatures present; dual or ambiguous); and <strong>D</strong>, insufficient evidence. Where a HAR contributed pairs to more than one tier, it was also assigned a single dominant tier by the priority C &gt; A &gt; B &gt; D.</p>
+<p><strong>Human-specific substitutions and exon/intron mapping.</strong> Per-base human-specific substitutions were called against the reconstructed human–chimp–bonobo ancestor from the <strong>Ensembl EPO primate</strong> alignment. For the 24 Tier A HARs (94 substitutions), each substitution's hg38 position was mapped against the full per-isoform exon structure of its host lncRNA in GENCODE v50; a substitution is <strong>exonic</strong> if it falls in an exon of ≥1 annotated isoform, <strong>intronic</strong> otherwise.</p>
+<hr />
+<h2 id="s1-hars-inside-lncrna-genes-are-predominantly-enhancers-not-functional-lncrnas">S1. HARs inside lncRNA genes are predominantly enhancers, not functional lncRNAs</h2>
+<p>Of the 312 zooHARs, <strong>110 overlap a GENCODE v50 lncRNA gene</strong> (127 HAR–lncRNA pairs, 124 genes). Integrating the six evidence types yields the tier distribution shown in Table S1 and Figure S1, in which enhancer-unit signatures predominate over functional-lncRNA signatures:</p>
+<p><strong>Table S1. Evidence-tier classification of the 110 lncRNA-overlapping HARs.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>Interpretation</th>
+<th>HARs (dominant)</th>
+<th>Pairs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A</strong></td>
+<td>likely <strong>functional lncRNA</strong></td>
+<td>24</td>
+<td>27</td>
+</tr>
+<tr>
+<td><strong>B</strong></td>
+<td>likely <strong>eRNA / enhancer-is-the-unit</strong></td>
+<td>55</td>
+<td>63</td>
+</tr>
+<tr>
+<td><strong>C</strong></td>
+<td><strong>enhancer + transcript</strong> (dual/ambiguous)</td>
+<td>5</td>
+<td>6</td>
+</tr>
+<tr>
+<td><strong>D</strong></td>
+<td><strong>insufficient evidence</strong></td>
+<td>26</td>
+<td>31</td>
+</tr>
+</tbody>
+</table>
+<p><em>(The HAR column assigns each of the 110 HARs to one dominant tier and sums to 110; the Pairs column classifies all 127 pairs independently and sums to 127 — 5 HARs have pairs in more than one tier.)</em></p>
+<p>The supporting evidence types:
+- <strong>Gene structure.</strong> 123/124 genes are multi-exonic (median 5 exons), so at the gene level these are spliced transcripts, not classic monoexonic eRNAs — <strong>but the HARs sit intronic in 115/127 pairs</strong> (9 exonic, 3 at TSS), a median 56 kb from the lncRNA TSS: the signature of an intronic enhancer within a host transcript, where the element and the RNA are separable.
+- <strong>MPRA.</strong> <strong>53 of 98 MPRA-tested overlap HARs (54%)</strong> drive reporter expression in fetal telencephalon — the same rate as all zooHARs — direct evidence that the HAR <em>sequence</em> is a functional enhancer.
+- <strong>Enhancer chromatin, multi-tissue.</strong> Fetal brain is the most common context (55% of overlap HARs), but <strong>58 of 110 HARs carry an active-enhancer signature in ≥1 non-brain tissue</strong> (ESC/iPSC 42%, mesenchyme 22%, endoderm 16%, blood 13%); only 23 are brain-exclusive and 29 carry no active mark anywhere.
+- <strong>Single-cell context.</strong> 37/110 HARs have CellWalker calls — 24 fetal telencephalon, 19 adult brain, and <strong>1 adult heart</strong> (ZOOHAR.182, ventricular cardiomyocyte).
+- <strong>TF binding.</strong> The detailed UniBind ChIP-seq motif analysis — intersecting each human-specific substitution with experimentally bound TF motifs — was run, within this lncRNA-overlapping set, on a focus set of 19 HARs prioritised for closer inspection; most carry prior enhancer evidence (16 of the 19 are MPRA-active and 16 carry an active-enhancer mark), though the set also includes a few weaker loci and spans all four evidence tiers. Of these 19, <strong>3 carry a human-specific substitution inside a validated (ChIP-seq-bound) TF motif</strong>: ZOOHAR.24 (3 substitutions within NFKB1 and STAT3 sites; 146 bound sites, the densest in the set), ZOOHAR.216 (CDX2), and ZOOHAR.42 (STAT3). These are TFBS-overlap counts; whether each substitution strengthens or weakens binding is not determined by overlap alone, and all three were carried into a per-allele PWM affinity re-score with a gBGC neutrality control in the main manuscript (§3.4), where the ZOOHAR.24 substitutions are shown to <em>create</em> a bound STAT3 site (borderline against the gBGC null), while ZOOHAR.42's bound STAT3 site loses affinity and ZOOHAR.216's substitutions fall in no strong bound motif. (ZOOHAR.167 is not in this set — it lies inside the protein-coding gene <em>ETS1</em>, not a lncRNA gene — and is analysed by the same method in the main manuscript §3.4.)</p>
+<p>The per-locus re-scoring results for the three lncRNA-set HARs are as follows. <strong>ZOOHAR.24</strong> (chr3, in the lncRNA <em>ENSG00000286856</em> within <em>TNIK</em>; 5 substitutions, W→S 3 / S→W 1 / S→S 1) is the most substitution-dense HAR in the lncRNA-overlapping set (9.3 substitutions/100 bp; 146 bound UniBind sites) and is most accessible in pancreas (0.58) and adrenal (0.43), MPRA-active. Its substitutions <strong>create</strong> a bound STAT3 site (−8.4 → +4.1 bits, +12.5) — the largest predicted gain of the three — but the gBGC null is borderline (<em>P</em> = 0.058), so the gain is not clearly distinguishable from neutral GC-biased gene conversion; the earlier overlap-based "disrupted NFKB1/STAT3" annotation is superseded (the change strengthens, not abolishes, binding), and a re-scored HOXA10 effect is negligible (Δ = −0.22). <strong>ZOOHAR.42</strong> (chr2, intronic in <em>LINC01798</em>; 6 substitutions, mixed spectrum; top tissue pancreas 0.58) has a substitution inside a bound STAT3 site, but that site <strong>loses</strong> affinity in the human allele (Δ = −1.6, <em>P</em> = 0.91); a predicted (unbound) NFKB1 motif elsewhere gains affinity, but UniBind does not confirm NFKB1 as bound at this locus, so ZOOHAR.42 is not a bound-motif gain candidate. <strong>ZOOHAR.216</strong> (chr2, near <em>FIGN</em>; 4 substitutions; kidney 0.86 but not non-brain-dominant, brain reaching 0.79) carries no substitution inside a strong bound motif: its best CDX2 site (14.64 bits) lies elsewhere in the 748 bp element and is unchanged by the human alleles (Δ = 0.00). None of the three is a significant bound-motif affinity gain.</p>
+<p><img alt="Figure S1" src="figures/evidence_tier_classification.png" /></p>
+<p><strong>Figure S1. Evidence-tier classification of the 110 lncRNA-overlapping HARs.</strong> Distribution of HARs across the four tiers — A (functional lncRNA), B (eRNA / enhancer-is-the-unit), C (enhancer + transcript), D (insufficient evidence) — together with the six evidence types (gene structure, MPRA, enhancer chromatin, single-cell context, expression, TF-motif disruption) that determine each call. Tier B (enhancer-unit) is the largest class.</p>
+<h2 id="s2-expression-is-developmental-and-multi-tissue-not-brain-exclusive">S2. Expression is developmental and multi-tissue, not brain-exclusive</h2>
+<p>Adult GTEx v10 detects only <strong>15 of the 124 host genes</strong> (≥1 TPM), mapping to <strong>12 distinct HARs</strong>, and skewed to testis. Development changes the picture in two respects, and it is mostly <strong>not</strong> brain (Table S2):
+- <strong>Developing brain (BrainSpan).</strong> Of 62 genes in that annotation, 23 are detected across development (vs 12 in adult body), 8 prenatal-enriched — including <em>RMST</em>, a known SOX2-partner neurogenesis lncRNA.
+- <strong>Fetal 15-organ atlas (Descartes).</strong> 76 of 124 genes are annotated and <strong>56 are detected — but only 8 peak in brain; 48 peak in a non-brain organ</strong> (kidney, placenta, intestine, adrenal, thymus, heart, muscle).</p>
+<p>Combining both developmental sources, <strong>59 of 110 HARs have a developmentally expressed host lncRNA</strong> (vs 12 by adult GTEx), and <strong>47 HARs (49 pairs) peak outside the brain</strong>. Clear non-brain examples include <em>LINC02055</em> (placenta), <em>MIR924HG</em> (kidney), <em>LINC01505</em> (heart) and <em>MIATNB</em> (thymus). A default assignment to "brain lncRNA" would therefore not describe the developmental expression of most of these loci.</p>
+<p><strong>Table S2. Host-lncRNA expression by tier and dataset.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>Pairs</th>
+<th>BrainSpan (≥1 RPKM)</th>
+<th>GTEx v10 (≥1 TPM)</th>
+<th>Descartes (fetal)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A</strong></td>
+<td>27</td>
+<td>21/27 (78%)</td>
+<td>11/27 (41%)</td>
+<td>18/27 (67%)</td>
+</tr>
+<tr>
+<td><strong>B</strong></td>
+<td>63</td>
+<td><strong>0/63</strong></td>
+<td><strong>0/63</strong></td>
+<td>21/63 (33%)</td>
+</tr>
+<tr>
+<td><strong>C</strong></td>
+<td>6</td>
+<td>2/6</td>
+<td>4/6</td>
+<td>5/6</td>
+</tr>
+<tr>
+<td><strong>D</strong></td>
+<td>31</td>
+<td>0/31</td>
+<td>0/31</td>
+<td>13/31</td>
+</tr>
+</tbody>
+</table>
+<p>The tier-B "~0% expressed" is correct for the developing brain and adult body — the contexts that decide the eRNA-vs-lncRNA question — while a third of tier-B host transcripts are detectable in the fetal atlas, mostly outside the brain. Annotation lag bounds the zeros: 33/63 tier-B pairs are absent from GTEx v10's annotation and 43/63 from BrainSpan's, so "not detected" there is a conservative floor rather than proven silence.</p>
+<p><img alt="Figure S2" src="figures/zooHAR_lncRNA_expression_by_tier.png" /></p>
+<p><strong>Figure S2. Host-lncRNA expression by tier and dataset.</strong> Fraction of host lncRNAs detected in each of the three expression references — BrainSpan developing brain (≥1 RPKM), GTEx v10 adult body (≥1 TPM), and the Descartes fetal 15-organ atlas — broken down by evidence tier. Tier A hosts are broadly expressed; Tier B hosts are undetected in developing brain and adult body (0/63 each) but a third are detectable in the fetal atlas, mostly outside the brain.</p>
+<h2 id="s3-even-in-the-functional-lncrna-tier-the-human-specific-changes-are-spliced-out">S3. Even in the functional-lncRNA tier, the human-specific changes are spliced out</h2>
+<p>If the Tier A "functional lncRNA" hypothesis were correct, the human-specific substitutions should preferentially land in exonic sequence, where they are retained in the mature RNA. Mapping all 24 Tier A HARs (94 substitutions) against per-isoform exon structure shows the opposite: <strong>22 of 24 Tier A HARs are fully intronic</strong> and <strong>94% of substitutions are spliced out</strong> of the mature transcript (Figure S3). Only ZOOHAR.109 and ZOOHAR.237 (<em>PTPRD-AS1</em>) place substitutions in exonic sequence, and each only in a single minority isoform. So even in the tier selected <em>for</em> a functional-lncRNA signature, the <em>human-specific</em> changes almost never reach the RNA product — they are positioned as intronic cis-regulatory elements embedded in the host gene, consistent with the intronic-enhancer reading of §S1.</p>
+<p><img alt="Figure S3" src="figures/tierA_exon_intron_summary.png" /></p>
+<p><strong>Figure S3. Tier A human-specific substitutions mapped to exon/intron structure.</strong> For each of the 24 Tier A ("functional lncRNA") HARs, the 94 human-specific substitutions are classified as exonic (retained in the mature RNA of ≥1 isoform) or intronic (spliced out). 22 of 24 HARs are fully intronic and 94% of substitutions are spliced out; only ZOOHAR.109 and ZOOHAR.237 (<em>PTPRD-AS1</em>) place substitutions in exonic sequence, each in a single minority isoform.</p>
+<hr />
+<h2 id="s4-data-and-code-availability">S4. Data and code availability</h2>
+<p>Values were re-derived from the primary per-locus outputs. Key tables underlying this supplement: <code><a href="data/zooHAR_lncRNA_evidence_tiers.csv">zooHAR_lncRNA_evidence_tiers.csv</a></code> (127-pair tier table with per-evidence-type columns), <code><a href="data/zooHAR_lncRNA_overlap_pairs.csv">zooHAR_lncRNA_overlap_pairs.csv</a></code>, and <code><a href="data/tierA_substitutions_exon_intron.csv">tierA_substitutions_exon_intron.csv</a></code>. Shared inputs (<code><a href="data/har_set_hg38.csv">har_set_hg38.csv</a></code>, <code><a href="data/har_tissue_matrix.csv">har_tissue_matrix.csv</a></code>) and full methods are in the main manuscript (<code>HAR_manuscript.md</code>, §2, §5).</p>
+<h2 id="s5-references">S5. References</h2>
+<p>Data sources and citations are as listed in the main manuscript (<code>HAR_manuscript.md</code>, §6). The references most directly underlying this supplement are: Keough et al. 2023 (zooHAR catalogue and lentiMPRA); Cao et al. 2020 / Descartes fetal atlas (GSE156793); the GTEx Consortium 2020 (GTEx v10); the BrainSpan Atlas of the Developing Human Brain; Frankish et al. 2021 (GENCODE); Gheorghe et al. 2019 (UniBind); and Castro-Mondragón et al. 2022 (JASPAR).</p>
+<footer>Generated static site &middot; figures in <code>figures/</code>, data in <code>data/</code>, source markdown in <code>manuscript/</code>.</footer>
+</div>
+</body>
+</html>

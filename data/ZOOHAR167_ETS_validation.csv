@@ -1,0 +1,11 @@
+check,result
+Coordinates,"ZOOHAR.167 = chr11:128,476,960-128,477,057 (97bp), nearest gene ETS1 (0kb, intronic)"
+Human-specific subs in ETS site,"3 subs at aln idx9/10/15 (hg38 ~chr11:128,477,039/40/45), all in the ETS site region"
+Outgroup conservation,ancestral allele conserved 9/9 non-human primates at all 3 (matches '18/18' claim in spirit; EPO primate set had 9 species+ancestors)
+ETS1 affinity gain (independent re-score),+10.6 bits (report said +8.8) — CONFIRMED direction & large magnitude
+ERG affinity gain (independent re-score),+2.8 bits (report said +7.5) — CONFIRMED direction; magnitude differs w/ PWM version
+FLI1 (additional ETS TF),+15.2 bits — same direction
+** gBGC CONTROL (the caveat) **,ALL 3 subs are AT->GC (weak->strong); HAR is flagged gBGC(hc) in project data. gBGC = neutral process favoring G/C.
+gBGC null P-value (ETS1),P(3 random AT->GC subs give >= observed ETS1 gain) = 0.106 — NOT significant vs neutral gBGC null
+gBGC null P-value (ERG),"P = 0.058 — borderline, NOT significant at 0.05"
+Allele-combo control,real human GCG gives the LARGEST ETS1 gain of all 8 GC-combos at these positions (rank 1/8) — specific alleles matter

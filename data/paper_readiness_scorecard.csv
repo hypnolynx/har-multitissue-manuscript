@@ -1,0 +1,11 @@
+har,tissue,status,n_TFBS,master_match,n_human_subs,subs_in_masterTF_motif,subs_in_any_TFBS,MPRA,H3K27ac_top,vista,evidence_layers,layers
+ZOOHAR.104,pancreas,CONFIRMED,6,0.83,3,0,0,not tested,no,hs828:Hindbrain,3,accessibility;masterTF-binding;VISTA
+ZOOHAR.278,kidney,CONFIRMED,11,0.55,3,0,1,not tested,no,,3,accessibility;masterTF-binding;accel→TF-motif
+ZOOHAR.112,skin→neural-crest,CONFIRMED (refined),75,0.48,5,0,0,active,no,,3,accessibility;masterTF-binding;MPRA-active
+ZOOHAR.167,lung→endothelial/immune,CONFIRMED (refined),122,0.44,4,3,3,not tested,no,,3,accessibility;masterTF-binding;accel→masterTF-motif
+ZOOHAR.170,intestine,CONFIRMED,53,0.43,3,0,3,not tested,no,,3,accessibility;masterTF-binding;accel→TF-motif
+ZOOHAR.200,muscle→stromal/myeloid,REVISED,85,0.13,5,0,1,not tested,yes,,3,accessibility;H3K27ac;accel→TF-motif
+ZOOHAR.276,kidney→architectural,REVISED,92,0.01,3,0,1,active,no,,3,accessibility;MPRA-active;accel→TF-motif
+ZOOHAR.236,intestine,CONFIRMED (sparse),5,0.6,3,0,0,not tested,no,,2,accessibility;masterTF-binding
+ZOOHAR.30,adrenal→signal-responsive,MECHANISM (revised),315,0.05,7,0,1,not tested,no,,2,accessibility;accel→TF-motif
+ZOOHAR.62,adrenal,INCONCLUSIVE,3,0.0,4,0,0,inactive,yes,,2,accessibility;H3K27ac

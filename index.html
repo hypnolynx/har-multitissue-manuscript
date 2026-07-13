@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multi-tissue chromatin activity in human accelerated regions</title>
+<style>
+:root { --fg:#1a1a1a; --muted:#666; --accent:#0b5394; --bg:#fff; --code:#f5f5f5; --border:#e2e2e2; }
+* { box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  color:var(--fg); background:var(--bg); line-height:1.65; margin:0; }
+.wrap { max-width:820px; margin:0 auto; padding:2rem 1.25rem 5rem; }
+nav.top { background:#0b5394; color:#fff; padding:.7rem 1.25rem; position:sticky; top:0; z-index:10;
+  box-shadow:0 1px 4px rgba(0,0,0,.15); }
+nav.top a { color:#fff; text-decoration:none; margin-right:1.2rem; font-weight:600; font-size:.95rem; opacity:.9; }
+nav.top a:hover { opacity:1; text-decoration:underline; }
+h1 { font-size:1.85rem; line-height:1.25; margin-top:1.5rem; }
+h2 { font-size:1.4rem; margin-top:2.4rem; border-bottom:2px solid var(--border); padding-bottom:.3rem; }
+h3 { font-size:1.12rem; margin-top:1.8rem; color:#333; }
+p, li { font-size:1rem; }
+a { color:var(--accent); }
+img { max-width:100%; height:auto; display:block; margin:1.5rem auto; border:1px solid var(--border);
+  border-radius:6px; box-shadow:0 1px 6px rgba(0,0,0,.08); }
+code { background:var(--code); padding:.1rem .35rem; border-radius:4px; font-size:.88em;
+  font-family:"SFMono-Regular",Consolas,monospace; }
+pre code { display:block; padding:1rem; overflow-x:auto; }
+table { border-collapse:collapse; width:100%; margin:1.5rem 0; font-size:.9rem; }
+th, td { border:1px solid var(--border); padding:.45rem .6rem; text-align:left; }
+th { background:#f0f4f8; }
+tr:nth-child(even) td { background:#fafbfc; }
+hr { border:none; border-top:1px solid var(--border); margin:2.5rem 0; }
+blockquote { border-left:3px solid var(--accent); margin:1.2rem 0; padding:.2rem 1rem; color:var(--muted); background:#fafbfc; }
+em { font-style:italic; }
+footer { color:var(--muted); font-size:.85rem; border-top:1px solid var(--border); margin-top:3rem; padding-top:1rem; }
+</style>
+</head>
+<body>
+<nav class="top">
+  <a href="index.html">Manuscript</a>
+  <a href="supplementary.html">Supplementary</a>
+  <a href="data/">Data files</a>
+</nav>
+<div class="wrap">
+<h1 id="multi-tissue-chromatin-activity-and-human-specific-transcription-factor-binding-gains-in-human-accelerated-regions">Multi-tissue chromatin activity and human-specific transcription-factor binding gains in human accelerated regions</h1>
+<p><strong>Claude Science — computational analysis manuscript</strong></p>
+<hr />
+<h2 id="abstract">Abstract</h2>
+<p>Human accelerated regions (HARs) are conserved sequences that acquired an unusual density of human-lineage substitutions, and are now largely interpreted as developmental enhancers, studied predominantly in neurodevelopmental contexts. We ask two questions that this focus has left open: across which tissues are HARs accessible, and do any carry a human-specific substitution that changes transcription-factor binding at an experimentally bound site. Building a 312 × 16 single-cell chromatin-accessibility matrix for the Zoonomia HARs (zooHARs; Keough et al. 2023) from CATlas snATAC and ENCODE DNase, with an ENCODE H3K27ac active-enhancer overlay and VISTA in-vivo enhancers for orthogonal validation, we find that brain is the tissue in which the most HARs are maximally accessible (66 of the 143 with signal) but <strong>45 zooHARs are dominantly accessible outside the brain</strong>, spanning kidney, intestine, adrenal, muscle, skin, pancreas, lung, heart, immune and liver lineages; a landmark-HAR control shows that accessibility localises candidate tissues but does not by itself demonstrate enhancer function. We then screened all 45 non-brain-dominant HARs for human-specific substitutions inside UniBind ChIP-seq-bound transcription-factor motifs, re-scoring each against the reconstructed primate ancestor and testing every affinity change against a per-locus GC-biased gene conversion (gBGC) null. <strong>36 of the 45 overlap a bound motif, 19 carry a substitution inside one, and 8 show an affinity gain that exceeds the gBGC null</strong> (<em>P</em> &lt; 0.05). The strongest, <strong>ZOOHAR.189</strong>, converts a non-matching sequence into a bound <strong>CTCF</strong> site near <em>MYLK2</em> (Δ +8.0 bits, <em>P</em> = 0.0001); others gain bound TP63, GATA3 and PRDM1 sites in tissue-matched contexts. These gains are predicted from position-weight matrices and remain hypotheses pending allele-specific assays: the GC-rich, gBGC-flagged locus ZOOHAR.167 produces exactly the affinity gain neutral gene conversion predicts and is not significant, illustrating why the null is applied throughout. Together these results characterise HARs as a <strong>multi-tissue set of candidate cis-regulatory elements</strong>, a subset of which carry candidate human-specific transcription-factor binding changes worth functional test.</p>
+<hr />
+<h2 id="1-introduction">1. Introduction</h2>
+<p>Human accelerated regions (HARs) are genomic sequences held nearly invariant across mammals that acquired an unusually high density of substitutions on the human lineage. The founding observation was that the fastest-evolving human non-coding sequences are overwhelmingly conserved elements, the top-ranked of which, <em>HAR1</em>, is an RNA gene expressed in the developing neocortex (Pollard et al. 2006; Prabhakar et al. 2006). That first example — a brain-expressed transcribed RNA — shaped the early interpretation of HARs as neurodevelopmental and, where a HAR falls inside a transcribed non-coding gene, as potentially acting through the transcript.</p>
+<p>Subsequent work has established a different model. Over the past decade, and accelerating with massively parallel reporter assays, machine-learning dissection of primate neurodevelopmental chromatin, and three-dimensional genome mapping, the prevailing view is that most HARs are <strong>developmental cis-regulatory enhancers</strong> whose human-specific substitutions tune enhancer strength, predominantly in neurodevelopmental contexts (Capra et al. 2013; Girskis et al. 2021; Whalen et al. 2023; Keough et al. 2023). Demonstrated enhancer activity also extends beyond the nervous system, as in the human-specific <em>HACNS1</em> limb enhancer (Prabhakar et al. 2008). The transcribed-RNA reading of <em>HAR1</em> is now understood as characteristic of that specific locus rather than the general mechanism.</p>
+<p>Two questions follow from this enhancer model that its neurodevelopmental focus has left largely unexamined. First, <strong>across which tissues are HARs active?</strong> HAR enhancer activity has been mapped most intensively in fetal brain and neural progenitors, and the aggregate neurodevelopmental enrichment is well established, but whether individual HARs are dominantly active in non-neural tissues has not been surveyed across a broad organ panel. Second, and more mechanistically, <strong>do the human-specific substitutions change transcription-factor binding at sites that are actually occupied?</strong> The enhancer model holds that HAR substitutions tune enhancer strength, and machine-learning and reporter studies support this in aggregate, but a direct, locus-resolved test — asking whether a human-specific change falls inside an experimentally bound TF motif and alters its predicted affinity, while controlling for the GC-biased gene conversion (gBGC) that confounds substitution counts at these GC-rich elements — has not been applied systematically outside the brain.</p>
+<p>Here we address both for the 312 Zoonomia HARs (zooHARs) of Keough et al. 2023, using orthogonal public-data layers rather than a single assay. We map each zooHAR's chromatin accessibility across 16 tissues and identify the 45 dominantly active outside the brain (§3.1–3.3), bounding the interpretation with a landmark-HAR control that shows accessibility localises candidate tissues without demonstrating enhancer function. We then screen all 45 non-brain-dominant HARs for human-specific substitutions inside UniBind ChIP-seq-bound TF motifs, re-scoring predicted affinity against the reconstructed primate ancestor and testing each change against a per-locus gBGC null, and characterise the loci that pass (§3.4). A separate analysis of the subset of zooHARs that fall inside long non-coding RNA genes — asking whether they act through the DNA element or the host transcript — is provided in the accompanying supplement. Together these analyses place HARs as a multi-tissue set of candidate cis-regulatory elements and identify specific loci at which human substitutions may have altered transcription-factor binding.</p>
+<hr />
+<h2 id="2-methods">2. Methods</h2>
+<h3 id="21-har-set-and-genome-build">2.1 HAR set and genome build</h3>
+<p>All analyses use hg38. The primary catalogue is the <strong>312 zooHARs</strong> of Keough et al. 2023 (<em>Science</em>, abm1696, Table S1). The working coordinate table (<code><a href="data/har_set_hg38.csv">har_set_hg38.csv</a></code>) contains 319 rows — the 312 zooHARs plus 7 supplementary Girskis et al. 2021 MPRA elements — and the 7 supplementary rows are excluded when reproducing zooHAR-only counts. Legacy identifiers (e.g. <code>2xHAR.384</code>) are carried alongside the <code>ZOOHAR.n</code> names.</p>
+<h3 id="22-multi-tissue-accessibility-matrix">2.2 Multi-tissue accessibility matrix</h3>
+<p>A <strong>312 HAR × 16 tissue</strong> normalized accessibility matrix was built from two hg38 sources, contributing 14 and 2 tissues respectively:
+- <strong>CATlas</strong> single-cell ATAC atlas (Zhang et al. 2021), for 14 tissues: each HAR was intersected (<code>bedtools intersect</code>) with each cell type's candidate cis-regulatory element (cCRE) BED, and the per-tissue score was the <strong>fraction of that tissue's cell types in which the HAR overlapped a cCRE</strong> (accessibility breadth).
+- <strong>ENCODE</strong> DNase-seq for the 2 tissues absent from CATlas — <strong>limb</strong> (ENCSR818JGZ, 53–56 d embryo) and <strong>testis</strong> (ENCSR866ODX): the per-tissue score was the maximum DNase signal within the HAR, set to zero outside a called peak.</p>
+<p>To make scores comparable across assays and sequencing depths, values were quantile-normalized to the interval [0,1] separately within each tissue, with zeros held at 0 and non-zero values rescaled to [0.1,1] (zero-anchored normalization). Two further layers were added for annotation and validation but not incorporated into the score: an ENCODE H3K27ac active-enhancer flag (available for 13 of the 16 tissues) and VISTA Enhancer Browser in-vivo positive enhancers, the latter used only for orthogonal validation. A HAR was defined as <strong>non-brain-dominant</strong> when its highest-scoring tissue was non-brain, that score was positive, and it exceeded the brain score by more than 0.15.</p>
+<p>An accessibility score reports overlap with open or regulatory chromatin in a tissue's cells, which is necessary but not sufficient for enhancer function. The landmark validation in §3.1 confirms this limit; accordingly, tissue calls are reported as candidate hypotheses rather than demonstrated enhancer function.</p>
+<h3 id="23-tf-motif-affinity-re-scoring-and-gbgc-neutrality-control">2.3 TF-motif affinity re-scoring and gBGC neutrality control</h3>
+<p>Human-specific substitutions were tested for effects on transcription-factor binding as follows. Substitution positions and alleles were taken from the primary per-locus tables where available, and otherwise recovered from the Ensembl EPO primate alignment (human versus the reconstructed human–chimpanzee–bonobo ancestor, requiring the ancestral allele to be conserved across the six outgroup primates); all human alleles were verified against the hg38 reference. Substitutions were intersected with UniBind ChIP-seq-derived bound TF-binding sites (hg38 Robust collection, 97.5 million sites), and for each substitution inside a bound motif the human and reconstructed-ancestor alleles were scored against the JASPAR position-weight matrix of the bound factor (log-odds versus uniform background, both strands, best-window score). To test whether an affinity gain was distinguishable from GC-biased gene conversion — the principal neutral confounder at GC-rich HARs — a per-locus neutrality null was generated by 20,000 simulations placing the same substitutions (preserving their allele composition) at random positions in the element, and the observed gain was compared against this distribution. This procedure was applied to ZOOHAR.167 and, as a systematic screen, to all 45 non-brain-dominant HARs (§3.4).</p>
+<hr />
+<h2 id="3-results">3. Results</h2>
+<h3 id="31-most-hars-with-accessibility-signal-peak-in-brain-but-a-substantial-non-brain-set-exists">3.1 Most HARs with accessibility signal peak in brain, but a substantial non-brain set exists</h3>
+<p>The 16 tissues we examined comprise the 14 profiled by the CATlas single-cell ATAC atlas (Zhang et al. 2021) — brain, heart, immune, intestine, kidney, liver, lung, muscle, pancreas, placenta, skin, stomach, adrenal and adipose — together with limb and testis, added from ENCODE DNase-seq because they are absent from CATlas (Methods §2.2). Of the 312 zooHARs, 143 have detectable accessibility in at least one of these tissues. Among these 143, brain is the highest-scoring tissue for the largest number of HARs (66/143 = 46%). This brain-enrichment is the expected result given the well-documented neurodevelopmental bias of HARs, and its recovery from an independent chromatin-accessibility dataset — one not used to define the HAR set — indicates that the matrix reproduces the known aggregate signal and is therefore a sound basis for the non-brain analysis that follows. On that basis, <strong>45 zooHARs are non-brain-dominant</strong> — their top tissue is non-brain and exceeds brain by margin &gt; 0.15 — and <strong>9 of these carry an ENCODE H3K27ac active-enhancer mark in that top tissue</strong>. The non-brain signal spans kidney, adrenal, lung, heart, intestine, pancreas, immune, muscle and skin lineages (Figure 1).</p>
+<p>A control against five named landmark HARs establishes the interpretive limit of the accessibility calls. Only two (HAR2/HACNS1 and 2xHAR.20) are in the zooHAR catalogue, and both score highest in brain or kidney rather than in their known transgenic-enhancer tissues (for example, HAR2's in-vivo limb activity, VISTA hs521, is not detected), because bulk and pseudobulk accessibility does not capture the developmental enhancer activity of these ~120 bp elements. The matrix thus reproduces the aggregate brain-enrichment of HARs but does not, by itself, identify the functional tissue of an individual element; the tissue calls in the following sections are accordingly treated as candidate hypotheses, not demonstrated enhancer function.</p>
+<p><img alt="Figure 1" src="figures/matrix_heatmap.png" /></p>
+<p><strong>Figure 1. Chromatin-accessibility landscape of the 312 zooHARs across 16 tissues.</strong> Heatmap of the normalized accessibility matrix, restricted to the 143 zooHARs with a non-zero score in at least one tissue (rows) across the 16 tissues (columns; 14 from the CATlas single-cell ATAC atlas, plus limb and testis from ENCODE DNase-seq). Colour encodes the within-tissue, zero-anchored normalized accessibility score (0–1), where the per-tissue value is the fraction of that tissue's cell types in which the HAR overlaps a candidate cis-regulatory element (CATlas) or the peak-gated maximum DNase signal (ENCODE limb and testis). Brain is the highest-scoring tissue for the largest number of HARs (66/143, 46%), consistent with the established neurodevelopmental enrichment of HARs, while a substantial subset shows its strongest accessibility outside the brain.</p>
+<h3 id="32-the-ten-highest-scoring-non-brain-hars-and-candidate-target-genes">3.2 The ten highest-scoring non-brain HARs and candidate target genes</h3>
+<p>We ranked the 45 non-brain-dominant HARs by accessibility score and examined the top ten (Table 1; Figure 2); they span muscle, kidney, skin, intestine, adrenal, pancreas and lung. This selection uses accessibility magnitude rather than active-enhancer marks as the primary criterion, which prioritises breadth of open chromatin over confirmed enhancer activity: only 2 of these 10 (ZOOHAR.200, ZOOHAR.62) carry an H3K27ac mark in their single top-scoring tissue, and the full set of 9 non-brain-dominant HARs with a top-tissue H3K27ac mark is a partly different group (§3.3, Table 2). The absence of a top-tissue mark for the other 8 does not exclude them as candidate enhancers, for two reasons. First, the mark is not generally absent: 8 of these 10 HARs carry an H3K27ac mark in at least one non-brain tissue — it simply does not fall in the highest-accessibility tissue. Second, the H3K27ac panel is incomplete: across all 45 non-brain-dominant HARs a top-tissue H3K27ac positive occurs only in adrenal, heart, immune, muscle and skin, so HARs topping kidney, intestine, lung or pancreas (6 of these 10) cannot register a top-tissue mark irrespective of their biology. The two criteria are therefore complementary rather than a filter: accessibility (CATlas single-cell ATAC) identifies candidate regulatory intervals, and the H3K27ac overlay (ENCODE bulk ChIP) upgrades the subset with independent active-enhancer evidence in the matched tissue; a HAR without the mark remains an accessibility-level candidate, not a rejected one.</p>
+<p>For each HAR we identified a candidate target gene by taking the nearest developmental regulator or otherwise biologically coherent protein-coding gene within ±1 Mb (Ensembl gene models; Table 1). For six of the ten (ZOOHAR.276, .112, .170, .62, .30, .104) the nearest <em>annotated</em> gene is an uncharacterized gene, pseudogene or non-coding locus while the candidate regulator lies further along the same locus, so the target assignment is a hypothesis rather than a call and enhancer-to-promoter contact mapping (4C/Hi-C) would be required to resolve it. Two patterns recur across the wider set: <em>PPARGC1A</em> is the nearest gene to two independent zooHARs (ZOOHAR.56 and ZOOHAR.236), and the <em>ETS1/FLI1</em> locus is bound by an endothelial TF program (§3.4).</p>
+<p>Four of the ten candidates are developmental transcription factors or morphogens (<em>FGF18</em>, <em>FOXC1</em>, <em>MEIS2</em>, and the <em>ETS1</em>/<em>FLI1</em> pair); a further two are developmental signalling molecules that are not themselves DNA-binding factors (<em>PTPRD</em>, a receptor phosphatase; <em>MAP3K1</em>, a MAPK-cascade kinase). The remaining four are metabolic or otherwise non-developmental (<em>PPARGC1A</em>, a metabolic coactivator; <em>APOA5</em>, lipid metabolism; <em>RAP1GAP2</em>, a Rap1-GTPase regulator; and the distal <em>IGF1R</em>, whose 935 kb separation makes the assignment weak).</p>
+<p><strong>Table 1. Top 10 non-brain-dominant zooHARs, with candidate target genes.</strong> Accessibility scores are from the normalized matrix (Score = top non-brain tissue; Brain = same HAR's brain score). "Nearest gene" is the closest annotated gene (with distance); "Candidate target" is the nearest developmental regulator or otherwise coherent protein-coding gene within ±1 Mb (Ensembl gene models), which for several HARs is more distal than the nearest annotated gene. Role: TF = transcription factor, morphogen, signalling (non-DNA-binding developmental molecule), or metabolic/other. "in gene" = HAR lies within that gene.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>zooHAR</th>
+<th>Tissue</th>
+<th>Score</th>
+<th>Brain</th>
+<th>H3K27ac</th>
+<th>Nearest gene (dist)</th>
+<th>Candidate target (dist)</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>ZOOHAR.200</td>
+<td>muscle</td>
+<td>0.93</td>
+<td>0.66</td>
+<td>yes</td>
+<td><em>RAP1GAP2</em> (in gene)</td>
+<td><em>RAP1GAP2</em> (in gene)</td>
+<td>other</td>
+</tr>
+<tr>
+<td>2</td>
+<td>ZOOHAR.278</td>
+<td>kidney</td>
+<td>0.86</td>
+<td>0.00</td>
+<td>–</td>
+<td><em>PTPRD</em> (in gene)</td>
+<td><em>PTPRD</em> (in gene)</td>
+<td>signalling</td>
+</tr>
+<tr>
+<td>3</td>
+<td>ZOOHAR.276</td>
+<td>kidney</td>
+<td>0.86</td>
+<td>0.56</td>
+<td>–</td>
+<td><em>SMIM23</em> (118 kb)</td>
+<td><em>FGF18</em> (210 kb)</td>
+<td>morphogen</td>
+</tr>
+<tr>
+<td>4</td>
+<td>ZOOHAR.112</td>
+<td>skin</td>
+<td>0.83</td>
+<td>0.00</td>
+<td>–</td>
+<td><em>GUSBP1</em> (in gene)</td>
+<td><em>MAP3K1</em> (138 kb)</td>
+<td>signalling</td>
+</tr>
+<tr>
+<td>5</td>
+<td>ZOOHAR.170</td>
+<td>intestine</td>
+<td>0.82</td>
+<td>0.00</td>
+<td>–</td>
+<td><em>LINC02702</em> (35 kb)</td>
+<td><em>APOA5</em>/<em>APOA</em> cluster (95 kb)</td>
+<td>metabolic</td>
+</tr>
+<tr>
+<td>6</td>
+<td>ZOOHAR.236</td>
+<td>intestine</td>
+<td>0.79</td>
+<td>0.00</td>
+<td>–</td>
+<td><em>PPARGC1A</em> (in gene)</td>
+<td><em>PPARGC1A</em> (in gene)</td>
+<td>metabolic</td>
+</tr>
+<tr>
+<td>7</td>
+<td>ZOOHAR.62</td>
+<td>adrenal</td>
+<td>0.78</td>
+<td>0.00</td>
+<td>yes</td>
+<td><em>LINC00923</em> (30 kb)</td>
+<td><em>IGF1R</em> (935 kb)</td>
+<td>other (distal)</td>
+</tr>
+<tr>
+<td>8</td>
+<td>ZOOHAR.30</td>
+<td>adrenal</td>
+<td>0.78</td>
+<td>0.10</td>
+<td>–</td>
+<td><em>GMDS</em> (in gene)</td>
+<td><em>FOXC1</em> (497 kb)</td>
+<td>TF</td>
+</tr>
+<tr>
+<td>9</td>
+<td>ZOOHAR.104</td>
+<td>pancreas</td>
+<td>0.77</td>
+<td>0.32</td>
+<td>–</td>
+<td><em>CDIN1</em> (in gene)</td>
+<td><em>MEIS2</em> (215 kb)</td>
+<td>TF</td>
+</tr>
+<tr>
+<td>10</td>
+<td>ZOOHAR.167</td>
+<td>lung</td>
+<td>0.73</td>
+<td>0.32</td>
+<td>–</td>
+<td><em>ETS1</em> (in gene)</td>
+<td><em>ETS1</em> / <em>FLI1</em> (in gene / 209 kb)</td>
+<td>TF</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="Figure 2" src="figures/nonbrain_ranking.png" /></p>
+<p><strong>Figure 2. Non-brain-dominant zooHARs.</strong> (a) The top 20 non-brain-dominant HARs ranked by normalized accessibility score. Bar length is the HAR's score in its top non-brain tissue, and the bar is coloured by that tissue (legend). The short vertical tick on each bar marks the same HAR's brain score for comparison; the tick sits at zero (and is therefore not visible) for HARs with no brain accessibility. A star (★) marks HARs carrying an ENCODE H3K27ac active-enhancer mark in their top tissue. The label at the right of each bar is the nearest annotated gene — a mix of protein-coding genes and non-coding/uncharacterized loci, shown as locus context and not implying that the HAR acts through that gene. (b) Tissue distribution of all 45 non-brain-dominant HARs (top tissue non-brain, exceeding the brain score by margin &gt; 0.15). A HAR is defined as non-brain-dominant on accessibility alone; active-enhancer-mark support is treated separately (Table 2, §3.3).</p>
+<h3 id="33-nine-non-brain-dominant-hars-carry-an-active-enhancer-mark-in-their-enriched-tissue">3.3 Nine non-brain-dominant HARs carry an active-enhancer mark in their enriched tissue</h3>
+<p>Of the 45 non-brain-dominant HARs, 9 overlap an ENCODE H3K27ac peak in the same tissue in which they are most accessible (Table 2). This co-occurrence of open chromatin and an active-enhancer histone mark in the enriched tissue is the strongest tissue-level evidence available in this dataset that these elements act as enhancers there, though it remains correlative: H3K27ac marks active regulatory chromatin but does not establish that the element drives a specific target gene, and none of the 9 overlaps a VISTA in-vivo positive enhancer, so none has independent transgenic confirmation. The 9 fall into interpretable groups. Two are the adjacent <em>RAP1GAP2</em> elements ZOOHAR.200 and ZOOHAR.124 (chr17, muscle), which overlap the gene body and may form a single muscle-active regulatory region. Three sit in transcription-factor or signalling genes with plausible tissue matches — ZOOHAR.302 in <em>GLIS3</em> (skin; <em>GLIS3</em> functions in epithelial and endocrine development), ZOOHAR.64 in <em>AXIN2</em> (immune; Wnt-pathway regulator), and ZOOHAR.208 in <em>PTPRT</em> (adrenal). Two are heart-accessible and near muscle/contractility genes (ZOOHAR.133 near <em>MIR4454</em>; ZOOHAR.189 2.7 kb from <em>MYLK2</em>, a cardiac/skeletal myosin light-chain kinase). ZOOHAR.62 (adrenal) lies 30 kb from the lncRNA <em>LINC00923</em>, and ZOOHAR.2 (adrenal) 167 kb from <em>MZT1</em>. As with the accessibility ranking, the distant assignments (<em>LINC00923</em>, <em>MZT1</em>) are candidate targets pending contact mapping. These 9 are the subset for which a tissue-matched reporter or CRISPRi assay is best motivated, because both the accessibility and the active-mark evidence point to the same tissue.</p>
+<p>Unlike the accessibility ranking in Table 1, this set needs no separate candidate-target column: 7 of the 9 HARs lie within, or within 2.7 kb of, their nearest gene, so the nearest gene is itself the candidate, and the two distal cases (<em>LINC00923</em> at 30 kb, <em>MZT1</em> at 167 kb) have no closer developmental regulator to nominate.</p>
+<p><strong>Table 2. The 9 non-brain-dominant zooHARs with an H3K27ac active-enhancer mark in their top tissue</strong> (ranked by accessibility score; none overlaps a VISTA in-vivo positive enhancer).</p>
+<table>
+<thead>
+<tr>
+<th>zooHAR</th>
+<th>Top tissue</th>
+<th>Score</th>
+<th>Brain</th>
+<th>Nearest gene (dist)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ZOOHAR.200</td>
+<td>muscle</td>
+<td>0.93</td>
+<td>0.66</td>
+<td>RAP1GAP2 (in gene)</td>
+</tr>
+<tr>
+<td>ZOOHAR.62</td>
+<td>adrenal</td>
+<td>0.78</td>
+<td>0.00</td>
+<td>LINC00923 (30 kb)</td>
+</tr>
+<tr>
+<td>ZOOHAR.124</td>
+<td>muscle</td>
+<td>0.72</td>
+<td>0.10</td>
+<td>RAP1GAP2 (in gene)</td>
+</tr>
+<tr>
+<td>ZOOHAR.302</td>
+<td>skin</td>
+<td>0.72</td>
+<td>0.52</td>
+<td>GLIS3 (in gene)</td>
+</tr>
+<tr>
+<td>ZOOHAR.208</td>
+<td>adrenal</td>
+<td>0.65</td>
+<td>0.00</td>
+<td>PTPRT (in gene)</td>
+</tr>
+<tr>
+<td>ZOOHAR.2</td>
+<td>adrenal</td>
+<td>0.65</td>
+<td>0.10</td>
+<td>MZT1 (167 kb)</td>
+</tr>
+<tr>
+<td>ZOOHAR.64</td>
+<td>immune</td>
+<td>0.61</td>
+<td>0.32</td>
+<td>AXIN2 (in gene)</td>
+</tr>
+<tr>
+<td>ZOOHAR.133</td>
+<td>heart</td>
+<td>0.52</td>
+<td>0.32</td>
+<td>MIR4454 (in gene)</td>
+</tr>
+<tr>
+<td>ZOOHAR.189</td>
+<td>heart</td>
+<td>0.34</td>
+<td>0.00</td>
+<td>MYLK2 (2.7 kb)</td>
+</tr>
+</tbody>
+</table>
+<p><em>A separate analysis of the 110 zooHARs that fall inside a GENCODE v50 lncRNA gene — classifying whether each acts through the DNA element or the host transcript, and mapping the human-specific substitutions relative to exon/intron structure — is provided in the accompanying supplement (<code><a href="supplementary.html">HAR_LncRNA_supplementary.md</a></code>, §S1–S3).</em></p>
+<h3 id="34-a-systematic-screen-for-human-specific-substitutions-in-bound-tf-motifs-across-the-non-brain-dominant-hars">3.4 A systematic screen for human-specific substitutions in bound TF motifs across the non-brain-dominant HARs</h3>
+<p>To ask which non-brain HARs carry a human substitution that could alter transcription-factor binding, we screened all 45 non-brain-dominant HARs uniformly. Human-specific substitutions were recovered for 44 (one, ZOOHAR.88, lacks an EPO primate-alignment block) from the Ensembl EPO alignment — human versus the reconstructed human–chimpanzee–bonobo ancestor, requiring the ancestral allele to be conserved across the six outgroup primates — and intersected with UniBind ChIP-seq-derived bound TF-binding sites (hg38 Robust collection, 97.5 million sites). This uses an <em>experimentally bound</em> motif, not a predicted match. For each HAR carrying such a substitution we re-scored the human versus ancestral allele with the JASPAR PWM of the bound factor and tested the affinity change against a per-locus GC-biased gene conversion (gBGC) null (20,000 simulations placing the same substitutions at random positions in the element). All human alleles were verified against the hg38 reference before scoring.</p>
+<p><strong>36 of the 45 HARs overlap ≥1 bound TFBS, and 19 carry a human-specific substitution inside a bound motif.</strong> Of these 19, <strong>8 show an affinity change that exceeds the gBGC null at <em>P</em> &lt; 0.05</strong> (Table 3) — an enrichment over the ~1 expected by chance among 19 tests. The bound factors are varied (CTCF, GATA3, TP63, FOSL2, TEAD1, PRDM1, MAFK, ZNF263), and the substitution spectra of the significant HARs are mixed rather than pure weak→strong, so the gains are not driven by gBGC.</p>
+<p><strong>Table 3. Non-brain-dominant HARs with a human-specific substitution in a UniBind-bound TF motif whose affinity change survives the gBGC null (<em>P</em> &lt; 0.05).</strong></p>
+<table>
+<thead>
+<tr>
+<th>HAR</th>
+<th>Top tissue</th>
+<th>Bound TF</th>
+<th>Δ affinity (bits)</th>
+<th>Null <em>P</em></th>
+<th>Spectrum</th>
+<th>Nearest gene</th>
+<th>Candidate target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ZOOHAR.189</strong></td>
+<td>heart 0.34</td>
+<td>CTCF</td>
+<td>+8.0</td>
+<td><strong>0.0001</strong></td>
+<td>W→S1 S→W1 S→S1</td>
+<td><em>MYLK2</em></td>
+<td><em>MYLK2</em> (2.7 kb)</td>
+</tr>
+<tr>
+<td>ZOOHAR.52</td>
+<td>adrenal 0.43</td>
+<td>GATA3</td>
+<td>+6.2</td>
+<td><strong>0.0010</strong></td>
+<td>W→S3 S→W2</td>
+<td><em>LINC00968</em></td>
+<td><em>PENK</em> (117 kb)</td>
+</tr>
+<tr>
+<td>ZOOHAR.13</td>
+<td>liver 0.49</td>
+<td>MAFK</td>
+<td>+3.7</td>
+<td><strong>0.0031</strong></td>
+<td>W→S2 S→S1 W→W1</td>
+<td><em>BNC2</em></td>
+<td><em>BNC2</em> (in gene)</td>
+</tr>
+<tr>
+<td>ZOOHAR.22</td>
+<td>adrenal 0.65</td>
+<td>PRDM1</td>
+<td>+6.0</td>
+<td><strong>0.0070</strong></td>
+<td>W→S2 S→W1 S→S1</td>
+<td><em>ZFHX3</em></td>
+<td><em>ZFHX3</em> (in gene)</td>
+</tr>
+<tr>
+<td>ZOOHAR.151</td>
+<td>pancreas 0.70</td>
+<td>FOSL2</td>
+<td>+14.3</td>
+<td><strong>0.0078</strong></td>
+<td>W→S4 S→S1</td>
+<td><em>LOC101927421</em></td>
+<td><em>ZNF608</em> (301 kb)</td>
+</tr>
+<tr>
+<td>ZOOHAR.302</td>
+<td>skin 0.72</td>
+<td>TP63</td>
+<td>+13.6</td>
+<td><strong>0.0179</strong></td>
+<td>W→S1 S→W2</td>
+<td><em>GLIS3</em></td>
+<td><em>GLIS3</em> (in gene)</td>
+</tr>
+<tr>
+<td>ZOOHAR.278</td>
+<td>kidney 0.86</td>
+<td>ZNF263</td>
+<td>+0.7</td>
+<td><strong>0.0231</strong></td>
+<td>S→W2 S→S1</td>
+<td><em>PTPRD</em></td>
+<td><em>PTPRD</em> (in gene)</td>
+</tr>
+<tr>
+<td>ZOOHAR.170</td>
+<td>intestine 0.82</td>
+<td>TEAD1</td>
+<td>+3.9</td>
+<td><strong>0.0288</strong></td>
+<td>W→S1 S→W2</td>
+<td><em>LINC02702</em></td>
+<td><em>BUD13</em> (54 kb)</td>
+</tr>
+</tbody>
+</table>
+<p>Three of the significant hits are described in detail below; the remainder are listed in Table 3, and the full 19-HAR re-scoring is provided as a supplementary table.</p>
+<p><strong>ZOOHAR.189 — a human-specific CTCF site (chr20, heart; Figure 3).</strong> The strongest hit (2.7 kb from the smooth/cardiac-muscle kinase <em>MYLK2</em>) converts a non-matching sequence into a bound <strong>CTCF</strong> site (ancestral −1.1 → human +7.0 bits, <em>P</em> = 0.0001) through three substitutions of mixed spectrum (one W→S, one S→W, one S→S — not a gBGC signature). A human-specific CTCF-site gain is mechanistically distinct from the enhancer-affinity changes elsewhere in the table: it implicates insulator/architectural rather than enhancer function, and is the clearest candidate in the set for an allele-specific assay. No prior report describes this element or a human-specific CTCF gain at the locus.</p>
+<p><strong>ZOOHAR.302 — a bound TP63 gain in skin (chr9, in <em>GLIS3</em>).</strong> This HAR is most accessible in skin (0.72) and is one of two significant hits (with ZOOHAR.189) that also carry an ENCODE H3K27ac active-enhancer mark <strong>in the same top tissue</strong> (§3.3); it is the only one of the two whose bound-motif gain is at an enhancer transcription factor rather than the insulator CTCF. Its substitutions strengthen a bound <strong>TP63</strong> motif (−9.7 → +3.9 bits, +13.6; <em>P</em> = 0.018) — TP63 is a transcription factor required for epidermal development — and the HAR lies inside <em>GLIS3</em>, an epithelial and endocrine developmental regulator. Accessibility, the active-enhancer mark, the bound-factor identity and the host gene all point to the same skin/epithelial context, making this the locus for which the lines of evidence are most consistent.</p>
+<p><strong>ZOOHAR.52 — a bound GATA3 gain in adrenal (chr8; candidate target <em>PENK</em>).</strong> Of its five human-specific substitutions (mixed spectrum), two fall within a bound <strong>GATA3</strong> motif and raise its predicted affinity (+6.2 bits, <em>P</em> = 0.001), at a HAR most accessible in adrenal (0.43); the nearest candidate target is the proenkephalin gene <em>PENK</em> (117 kb), and GATA3 has established roles in adrenal/neuroendocrine and immune development. It carries no top-tissue H3K27ac mark, so the evidence is accessibility + bound-motif gain rather than a confirmed active enhancer.</p>
+<p><strong>ZOOHAR.22 — a bound PRDM1 gain in adrenal (chr16, in <em>ZFHX3</em>).</strong> All four of this HAR's human-specific substitutions (mixed spectrum) fall inside a bound <strong>PRDM1</strong> (BLIMP1) motif — the largest number of in-motif substitutions of any significant hit — and its predicted affinity rises +6.0 bits (<em>P</em> = 0.007), at a HAR most accessible in adrenal (0.65). It lies inside <em>ZFHX3</em>, a zinc-finger homeobox transcription factor, and PRDM1 is itself a developmental and immune regulator, so the bound factor and host gene are function-coherent. Like ZOOHAR.52 it carries no top-tissue H3K27ac mark, so the evidence is accessibility + bound-motif gain.</p>
+<p>The largest single affinity gain in the screen belongs to <strong>ZOOHAR.151</strong> (bound FOSL2, an AP-1 factor; +14.3 bits, <em>P</em> = 0.008; pancreas 0.70, 301 kb from <em>ZNF608</em>), but four of its five substitutions are weak→strong and it carries no active-enhancer mark, so despite the magnitude it ranks below the CTCF, TP63, GATA3 and PRDM1 loci for follow-up: its spectrum is the most consistent with neutral GC-biased gene conversion among the significant hits, even though the per-locus null (which preserves that spectrum) still excludes chance at <em>P</em> &lt; 0.05. Conversely, ZOOHAR.278 (ZNF263, kidney) clears the null (<em>P</em> = 0.023) on an affinity change of only +0.7 bits, a reminder that statistical significance in this screen does not by itself imply a large effect: magnitude and significance are reported separately in Table 3, and the loci prioritised above combine both.</p>
+<p><strong>ZOOHAR.167 is recovered by the same screen but is non-significant.</strong> ZOOHAR.167 is one of the 45 non-brain-dominant HARs (lung; ranked 10th on accessibility, Table 1) and one of the 19 carrying a substitution inside a bound motif, but unlike the eight significant hits it does not clear the gBGC null (Figure 4). It lies inside the protein-coding gene <em>ETS1</em>. Its 3 of 4 human substitutions inside a bound ERG/ETS1 site raise predicted ETS affinity (ETS1 +10.6, ERG +2.8, FLI1 +15.2 bits), but all three are weak→strong, the element is high-confidence gBGC, and the null is not significant (<em>P</em> = 0.106 ETS1, 0.058 ERG). It illustrates why the null is applied throughout: an affinity gain at a GC-rich bound motif is expected under neutral gBGC, and only the mixed-spectrum hits in Table 3 exceed that expectation. (The three lncRNA-overlapping HARs flagged before the screen — ZOOHAR.24, ZOOHAR.42, ZOOHAR.216 — are re-scored by the same method in the supplement, §S1; none is a significant bound-motif gain.)</p>
+<p>These per-locus gains are hypotheses at the level of predicted affinity; as with ZOOHAR.167, none can be attributed to selection without an allele-specific functional assay, and the screen serves to identify which loci — led by ZOOHAR.189/CTCF, ZOOHAR.302/TP63, ZOOHAR.52/GATA3 and ZOOHAR.22/PRDM1 — are worth that assay and in which tissue.</p>
+<p><img alt="Figure 3" src="figures/fig7_zoohar189.png" /></p>
+<p><strong>Figure 3. The strongest screen hit, ZOOHAR.189, gains a bound CTCF site.</strong> (a) Locus schematic: the HAR (chr20, 68 bp) lies 2.7 kb from <em>MYLK2</em> and is most accessible in heart. (b) The 33 bp window that scores highest for CTCF in the human allele, aligned ancestor over human; all three human-specific substitutions (highlighted; mixed spectrum, one W→S, one S→W, one S→S — not gBGC-like) fall inside it and convert a non-matching ancestral sequence into a CTCF match. (c) The best-scoring CTCF site anywhere in the element, for each allele: the reconstructed ancestor has no strong site (best −1.1 bits) while the human allele scores +7.0, a gain of Δ = +8.0 bits; a per-locus neutrality null (20,000 simulations) gives <em>P</em> = 0.0001, the most significant of the 19 bound-motif HARs. Human alleles were verified against hg38 before scoring.</p>
+<p><img alt="Figure 4" src="figures/ZOOHAR167_flagship_mechanism.png" /></p>
+<p><strong>Figure 4. ZOOHAR.167 at the <em>ETS1/FLI1</em> locus, recovered by the screen but non-significant.</strong> (a) Locus schematic: the HAR (chr11q24.3, 97 bp) sits inside <em>ETS1</em>, 209 kb from <em>FLI1</em>. (b) Three human-specific substitutions (all A/T→G/C) fall within a ChIP-seq-bound ERG/ETS1 motif; the ancestral allele is conserved in 9/9 non-human primates. (c) Independent PWM re-score of human vs reconstructed-ancestor affinity: ETS1 +10.6, ERG +2.8, FLI1 +15.2 bits. Because a per-locus neutrality null gives P = 0.106 (ETS1) and P = 0.058 (ERG), the gain is not distinguishable from GC-biased gene conversion without an allele-specific functional assay.</p>
+<hr />
+<h2 id="4-discussion">4. Discussion</h2>
+<p>These results extend the HAR enhancer model along two axes the field's neurodevelopmental focus has left underexamined — tissue breadth and locus-resolved transcription-factor binding — and are explicit about where public data stop.</p>
+<p>On <strong>tissue</strong>, HARs are not brain-restricted: brain accounts for the largest single group, but 45 zooHARs are dominantly accessible outside it, across kidney, adrenal, heart, intestine, pancreas, muscle, skin, lung, immune and liver lineages, and 9 of these carry an active-enhancer histone mark in their enriched tissue. The lncRNA-overlapping subset shows the same pattern at the level of expression — 48 of 56 fetal-detected host genes reach their maximum outside the brain (supplement §S2). Non-brain HAR activity is therefore a systematic feature of the catalogue rather than a handful of exceptions.</p>
+<p>On <strong>mechanism</strong>, the screen provides a locus-resolved, gBGC-controlled test of the enhancer model's central claim that human substitutions alter regulatory binding. Of the 45 non-brain HARs, 19 place a human-specific substitution inside an experimentally bound TF motif, and 8 show an affinity gain that exceeds the neutral gBGC expectation — roughly eight-fold more than chance among the 19 tested. The bound factors are varied and tissue-appropriate: a gained CTCF site at ZOOHAR.189 (mechanistically an insulator/architectural change rather than an enhancer one), and gained TP63, GATA3 and PRDM1 sites in skin, adrenal and adrenal contexts that match each element's accessibility. That the significant hits carry mixed substitution spectra, while the pure weak→strong ZOOHAR.167 does not clear the null, indicates the screen is separating candidate binding changes from GC-biased gene conversion rather than simply rediscovering GC-rich elements.</p>
+<p>Three limits bound these results. First, <strong>accessibility is not function</strong>: the landmark control shows chromatin accessibility does not recover known transgenic-enhancer tissue calls, so every tissue assignment is a candidate hypothesis. Second, <strong>the binding gains are predicted, not measured</strong>: they are position-weight-matrix scores at bound motifs, so they identify where a human substitution is likely to have changed affinity, not that binding or a downstream regulatory effect actually changed — and the screen tests only the subset of substitutions that fall in a currently catalogued bound site, so it is a lower bound. Third, <strong>no locus here has a human-versus-ancestral functional assay</strong>, so no human-specific functional effect is demonstrated; ZOOHAR.167 makes the point concretely, as a GC-rich gBGC-flagged element that produces exactly the affinity gain neutral gene conversion predicts.</p>
+<p>These results suggest a concrete follow-up programme. The eight significant loci — led by ZOOHAR.189/CTCF, ZOOHAR.302/TP63, ZOOHAR.52/GATA3 and ZOOHAR.22/PRDM1 — are the priority set for allele-specific reporter or CRISPRi assays in the matched tissue, paired with enhancer-to-promoter contact mapping to resolve their candidate targets; a gained CTCF site is additionally testable by allele-specific binding and local contact-domain assays. Within the lncRNA-overlapping subset (supplement §S1), the minority of loci carrying genuine functional-lncRNA signatures warrant transcript-level study, while the majority are more appropriately studied as cis-regulatory elements by the same assays.</p>
+<hr />
+<h2 id="5-data-and-code-availability">5. Data and code availability</h2>
+<p>All values were re-derived from the primary per-locus outputs. Key tables: <code><a href="data/zooHAR_lncRNA_evidence_tiers.csv">zooHAR_lncRNA_evidence_tiers.csv</a></code> (127-pair tier table with per-evidence-type columns), <code><a href="data/zooHAR_lncRNA_overlap_pairs.csv">zooHAR_lncRNA_overlap_pairs.csv</a></code>, <code><a href="data/nonbrain_ranked_HARs.csv">nonbrain_ranked_HARs.csv</a></code> (45 non-brain HARs), <code><a href="data/har_tissue_matrix.csv">har_tissue_matrix.csv</a></code> (312 × 16), <code><a href="data/har_set_hg38.csv">har_set_hg38.csv</a></code> (coordinates + gBGC flags), <code><a href="data/paper_readiness_scorecard.csv">paper_readiness_scorecard.csv</a></code>, <code><a href="data/ZOOHAR167_ETS_validation.csv">ZOOHAR167_ETS_validation.csv</a></code>, <code><a href="data/tierA_substitutions_exon_intron.csv">tierA_substitutions_exon_intron.csv</a></code>, <code><a href="data/nonbrain_H3K27ac_active_HARs.csv">nonbrain_H3K27ac_active_HARs.csv</a></code> (the 9 H3K27ac-active non-brain HARs of Table 2), <code><a href="data/HAR45_unibind_subs.csv">HAR45_unibind_subs.csv</a></code> (the 19 non-brain-dominant HARs with a human-specific substitution in a UniBind-bound TF motif) and <code><a href="data/HAR45_unibind_affinity_null.csv">HAR45_unibind_affinity_null.csv</a></code> (affinity re-scoring and gBGC neutrality-null results for all 19, the significant subset of which is Table 3). UniBind bound TFBS are the hg38 Robust collection; substitutions were recovered from the Ensembl EPO primate alignment and human alleles verified against hg38.</p>
+<hr />
+<h2 id="6-references">6. References</h2>
+<ol>
+<li>Pollard KS, Salama SR, Lambert N, et al. An RNA gene expressed during cortical development evolved rapidly in humans. <em>Nature</em>, 2006; 443:167–172. doi:10.1038/nature05113.</li>
+<li>Prabhakar S, Noonan JP, Pääbo S, Rubin EM. Accelerated evolution of conserved noncoding sequences in humans. <em>Science</em>, 2006; 314:786. doi:10.1126/science.1130738.</li>
+<li>Prabhakar S, Visel A, Akiyama JA, et al. Human-specific gain of function in a developmental enhancer. <em>Science</em>, 2008; 321:1346–1350. doi:10.1126/science.1159974.</li>
+<li>Capra JA, Erwin GD, McKinsey G, Rubenstein JLR, Pollard KS. Many human accelerated regions are developmental enhancers. <em>Philos Trans R Soc Lond B Biol Sci</em>, 2013; 368:20130025. doi:10.1098/rstb.2013.0025.</li>
+<li>Keough KC, Whalen S, Inoue F, et al. Three-dimensional genome rewiring in loci with human accelerated regions. <em>Science</em>, 2023; 380:eabm1696. doi:10.1126/science.abm1696.</li>
+<li>Girskis KM, Stergachis AB, DeGennaro EM, et al. Rewiring of human neurodevelopmental gene regulatory programs by human accelerated regions. <em>Neuron</em>, 2021; 109:3239–3251. doi:10.1016/j.neuron.2021.08.005.</li>
+<li>Whalen S, Inoue F, Ryu H, et al. Machine learning dissection of human accelerated regions in primate neurodevelopment. <em>Neuron</em>, 2023; 111:857–873. doi:10.1016/j.neuron.2022.12.026.</li>
+<li>Zhang K, Hocker JD, Miller M, et al. A single-cell atlas of chromatin accessibility in the human genome. <em>Cell</em>, 2021; 184:5985–6001. doi:10.1016/j.cell.2021.10.024.</li>
+<li>Cao J, O'Day DR, Pliner HA, et al. A human cell atlas of fetal gene expression. <em>Science</em>, 2020; 370:eaba7721. doi:10.1126/science.aba7721.</li>
+<li>The GTEx Consortium. The GTEx Consortium atlas of genetic regulatory effects across human tissues. <em>Science</em>, 2020; 369:1318–1330. doi:10.1126/science.aaz1776.</li>
+<li>Frankish A, Diekhans M, Jungreis I, et al. GENCODE 2021. <em>Nucleic Acids Res</em>, 2021; 49:D916–D923. doi:10.1093/nar/gkaa1087.</li>
+<li>Castro-Mondragon JA, Riudavets-Puig R, Rauluseviciute I, et al. JASPAR 2022: the 9th release of the open-access database of transcription factor binding profiles. <em>Nucleic Acids Res</em>, 2022; 50:D165–D173. doi:10.1093/nar/gkab1113.</li>
+<li>Gheorghe M, Sandve GK, Khan A, Chèneby J, Ballester B, Mathelier A. A map of direct TF-DNA interactions in the human genome (UniBind). <em>Nucleic Acids Res</em>, 2019; 47:e21. doi:10.1093/nar/gky1210.</li>
+<li>Kosicki M, Baltoumas FA, Kelman G, et al. VISTA Enhancer Browser: an updated database of tissue-specific developmental enhancers. <em>Nucleic Acids Res</em>, 2025; 53:D324–D330. doi:10.1093/nar/gkae940.</li>
+<li>The ENCODE Project Consortium, Moore JE, Purcaro MJ, et al. Expanded encyclopaedias of DNA elements in the human and mouse genomes. <em>Nature</em>, 2020; 583:699–710. doi:10.1038/s41586-020-2493-4.</li>
+</ol>
+<p><em>Additional data resources: BrainSpan Atlas of the Developing Human Brain; ENCODE DNase-seq for limb (ENCSR818JGZ) and testis (ENCSR866ODX).</em></p>
+<footer>Generated static site &middot; figures in <code>figures/</code>, data in <code>data/</code>, source markdown in <code>manuscript/</code>.</footer>
+</div>
+</body>
+</html>
