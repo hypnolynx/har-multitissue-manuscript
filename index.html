@@ -16,7 +16,7 @@ nav.top a { color:#fff; text-decoration:none; margin-right:1.2rem; font-weight:6
 nav.top a:hover { opacity:1; text-decoration:underline; }
 h1 { font-size:1.85rem; line-height:1.25; margin-top:1.5rem; }
 h2 { font-size:1.4rem; margin-top:2.4rem; border-bottom:2px solid var(--border); padding-bottom:.3rem; }
-h3 { font-size:1.12rem; margin-top:1.8rem; color:#333; }
+h3 { font-size:1.12rem; margin-top:1.8rem; color:var(--fg); }
 p, li { font-size:1rem; }
 a { color:var(--accent); }
 img { max-width:100%; height:auto; display:block; margin:1.5rem auto; border:1px solid var(--border);
@@ -32,6 +32,20 @@ hr { border:none; border-top:1px solid var(--border); margin:2.5rem 0; }
 blockquote { border-left:3px solid var(--accent); margin:1.2rem 0; padding:.2rem 1rem; color:var(--muted); background:#fafbfc; }
 em { font-style:italic; }
 footer { color:var(--muted); font-size:.85rem; border-top:1px solid var(--border); margin-top:3rem; padding-top:1rem; }
+
+[data-theme="dark"] {
+  --fg:#e6e6e6; --muted:#9aa4af; --accent:#5aa9e6; --bg:#15181c; --code:#232830; --border:#2c333c;
+}
+[data-theme="dark"] th { background:#20262e; }
+[data-theme="dark"] tr:nth-child(even) td { background:#191d22; }
+[data-theme="dark"] blockquote { background:#191d22; }
+[data-theme="dark"] img { border-color:#2c333c; box-shadow:0 1px 6px rgba(0,0,0,.4); }
+html { color-scheme:light dark; }
+body { transition:background .2s ease, color .2s ease; }
+.theme-toggle { background:transparent; border:1px solid rgba(255,255,255,.5); color:#fff;
+  border-radius:6px; padding:.25rem .6rem; cursor:pointer; font-size:.9rem; font-weight:600; }
+.theme-toggle:hover { background:rgba(255,255,255,.15); }
+.nav-right { float:right; display:flex; align-items:center; gap:1rem; }
 </style>
 </head>
 <body>
@@ -39,6 +53,9 @@ footer { color:var(--muted); font-size:.85rem; border-top:1px solid var(--border
   <a href="index.html">Manuscript</a>
   <a href="supplementary.html">Supplementary</a>
   <a href="data/">Data files</a>
+  <span class="nav-right">
+    <button id="theme-btn" class="theme-toggle" type="button" aria-label="Toggle dark mode">&#9790; Dark</button>
+  </span>
 </nav>
 <div class="wrap">
 <h1 id="multi-tissue-chromatin-activity-and-human-specific-transcription-factor-binding-gains-in-human-accelerated-regions">Multi-tissue chromatin activity and human-specific transcription-factor binding gains in human accelerated regions</h1>
@@ -430,5 +447,28 @@ footer { color:var(--muted); font-size:.85rem; border-top:1px solid var(--border
 <p><em>Additional data resources: BrainSpan Atlas of the Developing Human Brain; ENCODE DNase-seq for limb (ENCSR818JGZ) and testis (ENCSR866ODX).</em></p>
 <footer>Generated static site &middot; figures in <code>figures/</code>, data in <code>data/</code>, source markdown in <code>manuscript/</code>.</footer>
 </div>
+
+<script>
+(function(){
+  var KEY='har-theme';
+  var saved=localStorage.getItem(KEY);
+  if(saved){document.documentElement.setAttribute('data-theme',saved);}
+  else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){
+    document.documentElement.setAttribute('data-theme','dark');}
+  function label(){var d=document.documentElement.getAttribute('data-theme')==='dark';
+    var b=document.getElementById('theme-btn'); if(b)b.textContent=d?'\u2600 Light':'\u263e Dark';}
+  window.addEventListener('DOMContentLoaded',function(){
+    label();
+    var b=document.getElementById('theme-btn');
+    if(b)b.addEventListener('click',function(){
+      var d=document.documentElement.getAttribute('data-theme')==='dark';
+      var t=d?'light':'dark';
+      document.documentElement.setAttribute('data-theme',t);
+      localStorage.setItem(KEY,t); label();});
+  });
+})();
+</script>
+
+
 </body>
 </html>
