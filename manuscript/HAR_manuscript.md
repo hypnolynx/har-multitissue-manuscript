@@ -1,6 +1,6 @@
 # Multi-tissue chromatin activity and human-specific transcription-factor binding gains in human accelerated regions
 
-**Y Xue**
+**Y Xue, Claude Science**
 
 ---
 
